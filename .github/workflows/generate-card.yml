@@ -25,7 +25,7 @@ jobs:
       env:
         EBIRD_USER_ID: ${{ vars.EBIRD_USER_ID }}
         EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
-      run: python src/ebird_readme_card/main.py
+      run: python src/ebird_readme_card/scraper.py
 
     - name: Commit and Push SVG Card
       run: |
