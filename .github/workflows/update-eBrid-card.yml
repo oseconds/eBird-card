@@ -1,4 +1,4 @@
-name: Update eBird Card
+name: Update README cards
 
 on:
   workflow_dispatch:
@@ -8,30 +8,38 @@ on:
         required: true
         type: string
 
-permissions:
-  contents: write
-
 jobs:
-  run-script:
+  build:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    
+    env:
+      OUTPUT_PATH: "ebird-card.svg" 
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           
       - name: Install dependencies
-        run: pip install pandas requests # 필요한 라이브러리 설치
-          
+        run: pip install pandas requests
+
       - name: Run Python script
         run: python src/ebird_readme_card/generate-card.py
         env:
-          ZIP_URL: ${{ github.event.inputs.zip_url }} # 입력받은 링크를 환경변수로 
+          ZIP_URL: ${{ github.event.inputs.zip_url }}
+          
 
-      - name: Commit and push generated card
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          file_pattern: ebird-card.svg
-          commit_message: "🎨 Update eBird stats card [skip ci]"
+      - name: Commit eBird card
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$OUTPUT_PATH"
+          git commit -m "Update eBird stats card" || exit 0
+          git push
