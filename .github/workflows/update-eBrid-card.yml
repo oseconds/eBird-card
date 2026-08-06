@@ -17,6 +17,11 @@ on:
           - state
           - country
           - none
+      card_title:
+        description: 'Custom Card Title (Leave blank for default)'
+        required: false
+        type: string
+        default: ''
 
 jobs:
   build:
@@ -26,7 +31,7 @@ jobs:
       contents: write
 
     env:
-      OUTPUT_PATH: "./assets/ebird-card.svg" 
+      OUTPUT_PATH: "ebird-card.svg" 
 
     steps:
       - uses: actions/checkout@v4
@@ -43,7 +48,8 @@ jobs:
         run: python src/ebird_readme_card/generate-card.py
         env:
           ZIP_URL: ${{ github.event.inputs.zip_url }}
-          LOCATION_MODE: ${{ github.event.inputs.location_mode || 'location' }}
+          LOCATION_MODE: ${{ github.event.inputs.location_mode }}
+          CARD_TITLE: ${{ github.event.inputs.card_title }}
 
       - name: Commit eBird card
         run: |
