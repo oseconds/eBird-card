@@ -1,0 +1,24 @@
+<svg xmlns="http://w3.org" width="450" height="240" viewBox="0 0 450 240">
+    <style>
+        .bg { fill: #0d1117; stroke: #30363d; stroke-width: 1.5; rx: 10px; }
+        .title { font: bold 16px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
+        .subtitle { font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
+        .label { font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
+        .value { font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
+    </style>
+    <rect class="bg" width="448" height="238" x="1" y="1" />
+    <text x="25" y="35" class="title">🦜 My eBird Recent Activity</text>
+    <line x1="25" y1="48" x2="425" y2="48" stroke="#30363d" stroke-width="1"/>
+    
+    {% if not checklists %}
+    <text x="25" y="75" class="label">No recent eBird records found.</text>
+    {% else %}
+        {% for cl in checklists %}
+        <g transform="translate(0, {{ 75 + loop.index0 * 50 }})">
+            <text x="25" y="0" class="label">{{ cl.loc_name }}</text>
+            <text x="425" y="0" class="subtitle" text-anchor="end">{{ cl.date }}</text>
+            <text x="25" y="18" class="value">🔹 {{ cl.birds_summary }}</text>
+        </g>
+        {% endfor %}
+    {% endif %}
+</svg>
