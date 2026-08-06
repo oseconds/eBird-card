@@ -107,12 +107,10 @@ def main():
 
     svg_content = svg_template.strip()
     
-    # Path handling based on OUTPUT_PATH configuration
     base, ext = os.path.splitext(output_path_env)
     svg_path = output_path_env if ext.lower() == '.svg' else f"{output_path_env}.svg"
     png_path = f"{base}.png" if ext.lower() == '.svg' else f"{output_path_env}.png"
 
-    # Clean leading relative path markers for clean URL rendering if needed
     clean_svg_path = svg_path.lstrip("./")
     clean_png_path = png_path.lstrip("./")
 
@@ -131,13 +129,25 @@ def main():
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
 
+    # Write to GitHub Actions Step Summary (마크다운 충돌 방지 버전)
+    step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if step_summary_path:
+        try:
+            summary_content = f"""### 🎉 eBird Card Update Complete!
+
+Here are your generated card links. Copy and paste them wherever you need:
+
+- **SVG Link (GitHub/Notion)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})`
+- **PNG Link (Discord/Blog/Slack)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})`
+"""
+            with open(step_summary_path, "a", encoding="utf-8") as f:
+                f.write(summary_content)
+            print("✨ Successfully published results to GitHub Actions Step Summary!")
+        except Exception as e:
+            print(f"⚠️ Failed to write step summary: {e}")
+
     print("\n" + "="*60)
     print("🎉 CARD UPDATE COMPLETE!")
-    print("👉 Copy and paste these links where you need them:")
-    if output_format in ["svg", "both"]:
-        print(f"\n[Markdown SVG]:\n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})")
-    if output_format in ["png", "both"]:
-        print(f"\n[Markdown PNG (For Notion/Blog/Discord)]: \n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})")
     print("="*60 + "\n")
 
 if __name__ == "__main__":
