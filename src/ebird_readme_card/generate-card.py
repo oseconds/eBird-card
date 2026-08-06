@@ -6,57 +6,42 @@ import pandas as pd
 from datetime import datetime
 
 def main():
-    # 1. Get the ZIP download link from GitHub Actions environment variables
     zip_url = os.environ.get("ZIP_URL")
-    
     if not zip_url:
-        print("❌ Error: ZIP_URL environment variable is missing. Please provide the download link.")
+        print("❌ Error: ZIP_URL environment variable is missing.")
         exit(1)
 
     print("📥 Downloading eBird data...")
-    
     try:
-        # 2. Download the ZIP file from the link
         response = requests.get(zip_url)
         response.raise_for_status()
 
-        # 3. Securely extract in-memory using BytesIO
         with zipfile.ZipFile(io.BytesIO(response.content)) as z:
             csv_filename = [name for name in z.namelist() if name.endswith('.csv')][0]
-            print(f"📄 CSV file found: {csv_filename}")
-            
-            # 4. Read CSV into Pandas via memory
             with z.open(csv_filename) as csv_file:
                 df = pd.read_csv(csv_file)
-                
     except Exception as e:
         print(f"❌ Error downloading or reading the data: {e}")
         exit(1)
 
-    # 5. Analyze data statistics
     print("📊 Analyzing data...")
     total_species = df['Common Name'].nunique()
     total_checklists = df['Submission ID'].nunique()
     total_observations = len(df)
     
-    # Get environment variables with smart fallbacks
     location_mode = os.environ.get("LOCATION_MODE", "location").strip().lower()
-    if not location_mode:
-        location_mode = "location"
-        
     card_title_env = os.environ.get("CARD_TITLE", "").strip()
     card_title = card_title_env if card_title_env else "🪶 My Feathered Log"
-
     output_format = os.environ.get("OUTPUT_FORMAT", "svg").strip().lower()
-    
-    # Get the latest observation record details (Date, Bird Name, Location)
+    output_path_env = os.environ.get("OUTPUT_PATH", "./assets/ebird-card.svg")
+    github_repo = os.environ.get("GITHUB_REPOSITORY", "your-username/eBird-card")
+
     try:
         df['Date'] = pd.to_datetime(df['Date'])
         latest_row = df.loc[df['Date'].idxmax()]
         last_date = latest_row['Date'].strftime("%Y-%m-%d")
         last_bird = str(latest_row.get('Common Name', 'N/A'))
         
-        # Determine location display based on mode
         if location_mode == "state":
             raw_location = str(latest_row.get('State/Province', 'N/A'))
         elif location_mode == "country":
@@ -64,27 +49,18 @@ def main():
             raw_location = state_val.split('-')[0] if '-' in state_val else state_val
         elif location_mode == "none":
             raw_location = ""
-        else:  # default: 'location'
+        else:
             raw_location = str(latest_row.get('Location', 'N/A'))
             
-        # Truncate location if too long (> 18 chars)
         max_len = 18
-        if len(raw_location) > max_len:
-            last_location = raw_location[:max_len] + "..."
-        else:
-            last_location = raw_location
-            
+        last_location = (raw_location[:max_len] + "...") if len(raw_location) > max_len else raw_location
     except Exception as e:
         print(f"⚠️ Warning during latest record parsing: {e}")
-        last_date = "N/A"
-        last_bird = "N/A"
-        last_location = "N/A"
+        last_date, last_bird, last_location = "N/A", "N/A", "N/A"
 
     today_date = datetime.now().strftime("%Y-%m-%d")
 
-    # 6. Generate SVG Profile Card Design
     print("🎨 Generating profile card...")
-    
     right_details_svg = ""
     if location_mode != "none" and last_location:
         right_details_svg += f"""
@@ -111,7 +87,6 @@ def main():
         <rect width="100%" height="100%" class="bg"/>
         <text x="30" y="40" class="title">{card_title}</text>
         
-        <!-- Left Stats -->
         <text x="30" y="85" class="stat-label">Total Species:</text>
         <text x="180" y="85" class="stat-value">{total_species}</text>
         
@@ -121,48 +96,48 @@ def main():
         <text x="30" y="145" class="stat-label">Total Observations:</text>
         <text x="180" y="145" class="stat-value">{total_observations}</text>
 
-        <!-- Right Side: Last Birding & Details -->
         <text x="260" y="85" class="stat-label">Last Birding:</text>
         <text x="260" y="105" class="stat-value" style="fill: #3fb950;">{last_date}</text>
 
         {right_details_svg}
 
-        <!-- Footer Date -->
         <text x="30" y="180" class="footer">Last updated: {today_date}</text>
     </svg>
     """
 
     svg_content = svg_template.strip()
-    github_repo = os.environ.get("GITHUB_REPOSITORY", "your-username/eBird-readme-card")
     
-    # Save SVG if requested
+    # Path handling based on OUTPUT_PATH configuration
+    base, ext = os.path.splitext(output_path_env)
+    svg_path = output_path_env if ext.lower() == '.svg' else f"{output_path_env}.svg"
+    png_path = f"{base}.png" if ext.lower() == '.svg' else f"{output_path_env}.png"
+
+    # Clean leading relative path markers for clean URL rendering if needed
+    clean_svg_path = svg_path.lstrip("./")
+    clean_png_path = png_path.lstrip("./")
+
     if output_format in ["svg", "both"]:
-        svg_path = "ebird-card.svg"
         os.makedirs(os.path.dirname(svg_path) if os.path.dirname(svg_path) else ".", exist_ok=True)
         with open(svg_path, "w", encoding="utf-8") as f:
             f.write(svg_content)
         print(f"✅ Successfully generated {svg_path}!")
 
-    # Save PNG if requested
     if output_format in ["png", "both"]:
-        png_path = "ebird-card.png"
+        os.makedirs(os.path.dirname(png_path) if os.path.dirname(png_path) else ".", exist_ok=True)
         try:
             import cairosvg
             cairosvg.svg2png(bytestring=svg_content.encode('utf-8'), write_to=png_path, scale=2.0)
             print(f"✅ Successfully generated {png_path} (High Resolution)!")
         except Exception as e:
-            print(f"⚠️ Failed to generate PNG via cairosvg: {e}")
+            print(f"⚠️ Failed to generate PNG: {e}")
 
-    # Print markdown snippet recommendations
     print("\n" + "="*60)
     print("🎉 CARD UPDATE COMPLETE!")
     print("👉 Copy and paste these links where you need them:")
-    
     if output_format in ["svg", "both"]:
-        print(f"\n[Markdown SVG]:\n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/ebird-card.svg)")
+        print(f"\n[Markdown SVG]:\n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})")
     if output_format in ["png", "both"]:
-        print(f"\n[Markdown PNG (For Notion/Blog/Discord)]: \n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/ebird-card.png)")
-        
+        print(f"\n[Markdown PNG (For Notion/Blog/Discord)]: \n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})")
     print("="*60 + "\n")
 
 if __name__ == "__main__":
