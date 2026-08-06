@@ -28,7 +28,7 @@ A simple way to showcase your recent eBird activity, total species, and latest s
 
 ## 📥 How to Download Your eBird Data
 
-1. **Visit eBird Data Download**: Go to [eBird Data Download](https://ebird.org/downloadMyData) and log in to your account.
+1. **Visit eBird Data Download**: Go to [eBird Data Download ↗](https://ebird.org/downloadMyData) and log in to your account.
 2. **Request Observations**: 
    - Check that your email address is correct (e.g., `your-email@example.com`).
    - Click the **"Request My Observations"** button under *My eBird Observations* to request your entire observation history and checklist metadata.
