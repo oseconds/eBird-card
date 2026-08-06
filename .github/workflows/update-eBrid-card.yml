@@ -23,6 +23,6 @@ jobs:
         run: pip install pandas requests # 필요한 라이브러리 설치
           
       - name: Run Python script
-        run: python src/scraper.py
+        run: python src/generate-card.py
         env:
           ZIP_URL: ${{ github.event.inputs.zip_url }} # 입력받은 링크를 환경변수로 주입!
