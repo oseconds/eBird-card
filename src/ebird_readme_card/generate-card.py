@@ -128,21 +128,22 @@ def main():
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
 
-    # Write to GitHub Actions Step Summary (복사 버튼이 있는 코드 블록 버전)
+    # Write to GitHub Actions Step Summary (미리보기 이미지 렌더링 + 복사 버튼 포함)
     step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary_path:
         try:
-            svg_url = f"[https://raw.githubusercontent.com/](https://raw.githubusercontent.com/){github_repo}/main/{clean_svg_path}"
-            png_url = f"[https://raw.githubusercontent.com/](https://raw.githubusercontent.com/){github_repo}/main/{clean_png_path}"
+            svg_url = f"https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path}"
+            png_url = f"https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path}"
 
             summary_lines = [
                 "### 🎉 eBird Card Update Complete!",
                 "",
-                "Here are your generated cards. Click the links to preview, or use the **copy button** on the code blocks below:",
+                "Here are your generated cards. You can preview them below or use the **copy button** to grab the markdown code:",
                 "",
                 "---",
                 "#### 📄 SVG Card (GitHub / Notion)",
-                f"- **Direct Preview Link**: [View SVG Image]({svg_url})",
+                f"![SVG Card Preview]({svg_url})",
+                f"- **Direct Link**: [Open SVG in new tab]({svg_url})",
                 "- **Markdown Code**:",
                 "```markdown",
                 f"![eBird Card]({svg_url})",
@@ -150,7 +151,8 @@ def main():
                 "",
                 "---",
                 "#### 🖼️ PNG Card (Discord / Blog / Slack)",
-                f"- **Direct Preview Link**: [View PNG Image]({png_url})",
+                f"![PNG Card Preview]({png_url})",
+                f"- **Direct Link**: [Open PNG in new tab]({png_url})",
                 "- **Markdown Code**:",
                 "```markdown",
                 f"![eBird Card]({png_url})",
