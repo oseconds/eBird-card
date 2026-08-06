@@ -39,6 +39,9 @@ jobs:
     permissions:
       contents: write
 
+    env:
+      OUTPUT_PATH: "./assets/ebird-card.svg" 
+
     steps:
       - uses: actions/checkout@v4
 
@@ -60,12 +63,13 @@ jobs:
           LOCATION_MODE: ${{ github.event.inputs.location_mode }}
           CARD_TITLE: ${{ github.event.inputs.card_title }}
           OUTPUT_FORMAT: ${{ github.event.inputs.output_format }}
+          OUTPUT_PATH: ${{ env.OUTPUT_PATH }}
           GITHUB_REPOSITORY: ${{ github.repository }}
 
-      - name: Commit eBird card files
+      - name: Commit eBird card
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ebird-card.svg ebird-card.png || true
-          git commit -m "Update eBird stats card (SVG/PNG)" || exit 0
+          git add .
+          git commit -m "Update eBird stats card" || exit 0
           git push
