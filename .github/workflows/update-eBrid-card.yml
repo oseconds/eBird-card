@@ -7,6 +7,16 @@ on:
         description: 'eBird ZIP Download URL'
         required: true
         type: string
+      location_mode:
+        description: 'Select Location Display Mode'
+        required: true
+        default: 'location'
+        type: choice
+        options:
+          - location
+          - state
+          - country
+          - none
 
 jobs:
   build:
@@ -15,9 +25,8 @@ jobs:
     permissions:
       contents: write
 
-    
     env:
-      OUTPUT_PATH: "ebird-card.svg" 
+      OUTPUT_PATH: "./assets/ebird-card.svg" 
 
     steps:
       - uses: actions/checkout@v4
@@ -34,7 +43,7 @@ jobs:
         run: python src/ebird_readme_card/generate-card.py
         env:
           ZIP_URL: ${{ github.event.inputs.zip_url }}
-          
+          LOCATION_MODE: ${{ github.event.inputs.location_mode || 'location' }}
 
       - name: Commit eBird card
         run: |
