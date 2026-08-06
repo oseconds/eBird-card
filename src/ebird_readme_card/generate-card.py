@@ -136,10 +136,12 @@ def main():
         try:
             summary_content = f"""### 🎉 eBird Card Update Complete!
 
-Here are your generated card links. Copy and paste them wherever you need:
+Here are your generated card links. Click or copy as needed:
 
-- **SVG Link (GitHub/Notion)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})`
-- **PNG Link (Discord/Blog/Slack)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})`
+- **SVG URL (clickable)**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})
+  - **Markdown (copy ready)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})`
+- **PNG URL (clickable)**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})
+  - **Markdown (copy ready)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})`
 """
             with open(step_summary_path, "a", encoding="utf-8") as f:
                 f.write(summary_content)
