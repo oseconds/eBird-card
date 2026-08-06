@@ -1,0 +1,17 @@
+name: eBird Profile Update
+on:
+  workflow_dispatch:
+    inputs:
+      zip_url:
+        description: 'eBird ZIP Download URL'
+        required: true
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 다운로드 링크 확인
+        run: |
+          echo "전달받은 링크: ${{ github.event.inputs.zip_url }}"
+          # 여기서 파이썬 스크립트를 실행해 다운로드 및 SVG 생성을 진행합니다.
