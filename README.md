@@ -26,14 +26,45 @@ A simple way to showcase your recent eBird activity, total species, and latest s
 
 ---
 
+## 📥 How to Download Your eBird Data
+
+1. **Visit eBird Data Download**: Go to [eBird Data Download](https://ebird.org/downloadMyData) and log in to your account.
+2. **Request Observations**: 
+   - Check that your email address is correct (e.g., `your-email@example.com`).
+   - Click the **"Request My Observations"** button under *My eBird Observations* to request your entire observation history and checklist metadata.
+3. **Wait for the Email**:
+   - After requesting, eBird will process your data. Once it's ready, you will receive an official email from `do-not-reply@ebird.org` with the subject **"Your eBird data are now available for download"**.
+   - *(Note: If you do not receive an email within 24 hours, check your spam folder, verify your email address, and ensure `do-not-reply@ebird.org` is added to your allowed contacts list before trying again).*
+4. **Get the Download Link**: Open the email when it arrives, copy the long S3 download link (`https://...`), and paste it into your GitHub Actions workflow when generating your stats card!
+
+---
+
 ## 🛠️ How to Use
 
-1. **Download your eBird data**: Go to eBird, request your data download, and get your export ZIP link.
-2. **Run the GitHub Action**: 
+1. **Fork this repository** to your GitHub account.
+2. **Request your eBird data** and get the download ZIP link (as shown above).
+3. **Run the GitHub Action**: 
    - Go to your repository's **Actions** tab.
    - Select **Update README cards**.
    - Click **Run workflow**.
-   - Paste your eBird ZIP download URL and optionally choose your preferred **Location Display Mode** and **Custom Title**.
-3. **Add to your README**:
-   ```markdown
-   ![eBird Card](ebird-card.svg)
+   - Paste your eBird ZIP download URL, select your preferred **Location Display Mode**, and optionally enter a **Custom Title**.
+4. **Add to your GitHub Profile README**:
+   
+   `![eBird Card](https://raw.githubusercontent.com/oseconds/eBird-readme-card/main/ebird-card.svg)`
+   
+   *(Make sure to replace `oseconds` with your actual GitHub username!)*
+
+---
+
+## ⚙️ Workflow Inputs (`workflow_dispatch`)
+
+When running the workflow manually, you can configure:
+- **`zip_url`**: The direct download link to your eBird data ZIP file (Required).
+- **`location_mode`**: Choose how location is displayed (`location`, `state`, `country`, or `none`).
+- **`card_title`**: Custom title for your card (Leave blank for the default `🪶 My Feathered Log`).
+
+---
+
+## 📄 License
+
+MIT License
