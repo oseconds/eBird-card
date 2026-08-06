@@ -12,7 +12,7 @@ class EBirdProfileScraper:
 
     def fetch_recent_checklist_ids(self, limit: int = 3) -> list:
         """유저의 eBird 프로필 페이지에서 최근 체크리스트 subId 목록을 추출합니다."""
-        url = f"https://ebird.org{self.user_id}/world"
+        url = f"https://ebird.org/profile/{self.user_id}/world"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
         }
@@ -57,7 +57,7 @@ def get_data_and_render():
     formatted_checklists = []
     for sid in sub_ids:
         # 이전에 api.py나 인라인 코드로 검증에 성공한 API 호출 파트
-        api_url = f"https://ebird.org{sid}"
+        api_url = f"https://api.ebird.org/v2/product/checklist/view/{sid}"
         api_key = os.environ.get("EBIRD_API_KEY")
         api_res = requests.get(api_url, headers={"X-eBirdApiToken": api_key}, timeout=10)
         
