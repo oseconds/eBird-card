@@ -1,0 +1,1 @@
+"""eBird README card package."""
