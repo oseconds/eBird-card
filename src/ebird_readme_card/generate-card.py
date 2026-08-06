@@ -46,6 +46,8 @@ def main():
         
     card_title_env = os.environ.get("CARD_TITLE", "").strip()
     card_title = card_title_env if card_title_env else "🪶 My Feathered Log"
+
+    output_format = os.environ.get("OUTPUT_FORMAT", "svg").strip().lower()
     
     # Get the latest observation record details (Date, Bird Name, Location)
     try:
@@ -81,16 +83,16 @@ def main():
     today_date = datetime.now().strftime("%Y-%m-%d")
 
     # 6. Generate SVG Profile Card Design
-    print("🎨 Generating profile card (SVG)...")
+    print("🎨 Generating profile card...")
     
     right_details_svg = ""
     if location_mode != "none" and last_location:
-        # Location 값만 라벨 없이 출력
         right_details_svg += f"""
         <text x="260" y="128" class="sub-value" title="{raw_location}" style="fill: #8b949e;">{last_location}</text>
         """
     
     right_details_svg += f"""
+    <text x="260" y="150" class="sub-label">Sighted:</text>
     <text x="315" y="150" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
     """
 
@@ -130,15 +132,38 @@ def main():
     </svg>
     """
 
-    output_path = os.environ.get("OUTPUT_PATH", "ebird-card.svg")
-    dir_name = os.path.dirname(output_path)
-    if dir_name:
-        os.makedirs(dir_name, exist_ok=True)
+    svg_content = svg_template.strip()
+    github_repo = os.environ.get("GITHUB_REPOSITORY", "your-username/eBird-readme-card")
+    
+    # Save SVG if requested
+    if output_format in ["svg", "both"]:
+        svg_path = "ebird-card.svg"
+        os.makedirs(os.path.dirname(svg_path) if os.path.dirname(svg_path) else ".", exist_ok=True)
+        with open(svg_path, "w", encoding="utf-8") as f:
+            f.write(svg_content)
+        print(f"✅ Successfully generated {svg_path}!")
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(svg_template.strip())
+    # Save PNG if requested
+    if output_format in ["png", "both"]:
+        png_path = "ebird-card.png"
+        try:
+            import cairosvg
+            cairosvg.svg2png(bytestring=svg_content.encode('utf-8'), write_to=png_path, scale=2.0)
+            print(f"✅ Successfully generated {png_path} (High Resolution)!")
+        except Exception as e:
+            print(f"⚠️ Failed to generate PNG via cairosvg: {e}")
 
-    print(f"✅ Successfully generated {output_path}!")
+    # Print markdown snippet recommendations
+    print("\n" + "="*60)
+    print("🎉 CARD UPDATE COMPLETE!")
+    print("👉 Copy and paste these links where you need them:")
+    
+    if output_format in ["svg", "both"]:
+        print(f"\n[Markdown SVG]:\n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/ebird-card.svg)")
+    if output_format in ["png", "both"]:
+        print(f"\n[Markdown PNG (For Notion/Blog/Discord)]: \n![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/ebird-card.png)")
+        
+    print("="*60 + "\n")
 
 if __name__ == "__main__":
     main()
