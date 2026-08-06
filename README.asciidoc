@@ -1,170 +1,100 @@
 = eBird-readme-card
 :revdate: 2026-08-06
 :toc: left
-:toc-title: 목차
+:toc-title: Table of Contents
 :icons: font
+:source-highlighter: rouge
 
-== 1. 프로젝트 구상 (Concept)
+== Project Overview
 
-=== 1.1. 배경 및 목적
-* *eBird API의 프라이버시 제약*: eBird 공식 API 2.0은 개인 식별 정보 및 사용자 계정 기반의 '개인 탐조 기록(Life List 등)' 엔드포인트를 제공하지 않음.
-* *해결 방안*: 사용자의 eBird 공개 프로필 웹페이지에서 최근 체크리스트 목록을 스크래핑(Scraping)한 뒤, 각 체크리스트의 고유 ID(`subId`)를 활용해 공공 API로 상세 관찰 종 정보를 융합하는 하이브리드 데이터 파이프라인 구축.
-* *최종 목표*: 깃허브 프로필 리드미(`README.md`)에 실시간으로 업데이트되는 미려한 **다크 모드 스타일의 탐조 요약 SVG 카드 위젯**을 자동 생성 및 첨부.
+eBird-readme-card automatically generates a GitHub-ready SVG card from a user's public eBird activity.
 
-=== 1.2. 시스템 아키텍처 아웃라인
+== Goals
+
+* Scrape recent public checklist IDs.
+* Combine scraped IDs with official eBird API data.
+* Render a dark-themed SVG using Jinja2 templates.
+* Update automatically through GitHub Actions.
+* Eventually publish as a reusable GitHub Action.
+
+[source,yaml]
+----
+- uses: oseconds/eBird-readme-card@v1
+  with:
+    ebird_user_id: ${{ secrets.EBIRD_USER_ID }}
+    ebird_api_key: ${{ secrets.EBIRD_API_KEY }}
+----
+
+== Architecture
+
 [mermaid]
 ....
 graph TD
-    A[GitHub Actions / Cron] --> B[Python Scraper]
-    B -->|Scrape HTML| C(eBird Public Profile)
-    B -->|Fetch JSON via Token| D(eBird API v2)
-    B --> E[SVG Card Generator]
-    E -->|Write File| F[ebird-card.svg]
-    F -->|Git Commit & Push| G[GitHub Profile README]
+A[GitHub Actions] --> B[Profile Scraper]
+B --> C[eBird Public Profile]
+B --> D[eBird API]
+C --> E[Checklist IDs]
+D --> F[Checklist Details]
+E --> G[Jinja2 SVG Template]
+F --> G
+G --> H[ebird-card.svg]
 ....
 
----
+== Tech Stack
 
-== 2. 기술 스택 및 실현 방법 (Technical Stack)
+|===
+|Category |Technology
 
-[cols="1,3", options="header"]
+|Language
+|Python 3.11
+
+|Scraping
+|requests + BeautifulSoup
+
+|Template
+|Jinja2
+
+|Automation
+|GitHub Actions
+
+|Secrets
+|GitHub Repository Secrets
 |===
 
-|구분 |선택 기술 및 목적
-|*Data Collection* |`Python 3.10+`, `requests` (API 호출), `beautifulsoup4` (웹 프로필 파싱 및 ID 추출)
-|*Visual Rendering*|`Python Native String IO` (템플릿 기반 동적 SVG XML 스트링 생성)
-|*Automation*      |`GitHub Actions` (Cron 스케줄러 기반 무중단 일일 빌드 배포)
-|*Data Privacy*    |`GitHub Repository Secrets` (eBird API Key 및 User ID 암호화 보호)
-|===
+== Directory Layout
 
----
-
-== 3. 상세 구현 명세 (Implementation)
-
-=== 3.1. 환경 변수 요구사항 (Secrets)
-보안 및 재사용성을 위해 소스코드 내 하드코딩을 배제하고 아래 환경 변수를 주입받아 작동합니다.
-* `EBIRD_USER_ID`: eBird 웹 프로필 식별자 (예: `USER123456`)
-* `EBIRD_API_KEY`: eBird 공식 개발자 포털에서 발급받은 X-eBirdApiToken
-
-=== 3.2. 핵심 파이썬 스크립트 (`update_ebird.py`)
-[source,python]
+[source,text]
 ----
-import os
-import re
-import requests
-from bs4 import BeautifulSoup
-
-EBIRD_USER_ID = os.environ.get("EBIRD_USER_ID")
-EBIRD_API_KEY = os.environ.get("EBIRD_API_KEY")
-
-def get_recent_checklist_ids(user_id):
-    """1단계: 유저 프로필에서 최근 체크리스트 subId 3개 추출"""
-    url = f"https://ebird.org{user_id}/world"
-    headers = {"User-Agent": "Mozilla/5.0"}
-    try:
-        res = requests.get(url, headers=headers)
-        if res.status_code != 200: return []
-        soup = BeautifulSoup(res.text, 'html.parser')
-        return list(set(re.findall(r'subId=(S\d+)', str(soup))))[:3]
-    except Exception as e:
-        print(f"Scraping Error: {e}")
-        return []
-
-def get_checklist_details(sub_id, api_key):
-    """2단계: subId 기반 eBird API 정식 상세 데이터 쿼리"""
-    url = f"https://ebird.org{sub_id}"
-    headers = {"X-eBirdApiToken": api_key}
-    try:
-        res = requests.get(url, headers=headers)
-        return res.json() if res.status_code == 200 else None
-    except:
-        return None
-
-def generate_svg_card(checklists):
-    """3단계: 수집 데이터를 매핑하여 GitHub 다크 테마 맞춤형 SVG 레이아웃 렌더링"""
-    svg = """<svg xmlns="http://w3.org" width="450" height="240" viewBox="0 0 450 240">
-    <style>
-        .bg { fill: #0d1117; stroke: #30363d; stroke-width: 1.5; rx: 10px; }
-        .title { font: bold 16px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }
-        .subtitle { font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
-        .label { font: bold 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }
-        .value { font: 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }
-    </style>
-    <rect class="bg" width="448" height="238" x="1" y="1" />
-    <text x="25" y="35" class="title">🦜 My eBird Recent Activity</text>
-    <line x1="25" y1="48" x2="425" y2="48" stroke="#30363d" stroke-width="1"/>
-    """
-    
-    y_offset = 75
-    if not checklists:
-        svg += f'<text x="25" y="{y_offset}" class="label">No records found or private profile.</text>'
-    else:
-        for cl in checklists:
-            loc = cl.get('loc', {}).get('name', 'Unknown Location')
-            if len(loc) > 30: loc = loc[:27] + "..."
-            date = cl.get('obsDt', '').split(' ')
-            
-            birds = [obs.get('comName') for obs in cl.get('obs', []) if obs.get('comName')]
-            birds_summary = ", ".join(birds[:2]) + (f" 외 {len(birds)-2}종" if len(birds) > 2 else "")
-            
-            svg += f"""
-            <g transform="translate(0, {y_offset})">
-                <text x="25" y="0" class="label">{loc}</text>
-                <text x="425" y="0" class="subtitle" text-anchor="end">{date}</text>
-                <text x="25" y="18" class="value">🔹 {birds_summary}</text>
-            </g>
-            """
-            y_offset += 50
-            
-    svg += "\n</svg>"
-    return svg
-
-if __name__ == "__main__":
-    sub_ids = get_recent_checklist_ids(EBIRD_USER_ID)
-    checklist_data = [get_checklist_details(sid, EBIRD_API_KEY) for sid in sub_ids if get_checklist_details(sid, EBIRD_API_KEY)]
-    
-    with open("ebird-card.svg", "w", encoding="utf-8") as f:
-        f.write(generate_svg_card(checklist_data))
+.
+├── update_ebird.py
+├── templates/
+│   └── card.svg.j2
+├── assets/
+│   └── ebird-card.svg
+├── .github/workflows/
+└── README.asciidoc
 ----
 
-=== 3.3. 자동화 워크플로우 구성 (`.github/workflows/ebird-readme.yml`)
+== Why Jinja2?
+
+Instead of building SVG with string concatenation, the project uses Jinja2 templates so the SVG layout stays readable while Python only supplies data.
+
+== Roadmap
+
+* Validate scraping
+* Validate API integration
+* Render SVG with Jinja2
+* Automate updates
+* Publish reusable GitHub Action
+* Support themes and statistics
+
+== Future
+
+Target usage:
+
 [source,yaml]
 ----
-name: Generate eBird SVG Card
-
-on:
-  schedule:
-    - cron: '0 15 * * *' # 매일 KST 자정 자동 실행
-  workflow_dispatch:   # 수동 실행 트리거 제공
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
-    - name: Install Dependencies
-      run: pip install requests beautifulsoup4
-    - name: Run Generator
-      env:
-        EBIRD_USER_ID: ${{ secrets.EBIRD_USER_ID }}
-        EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
-      run: python update_ebird.py
-    - name: Commit and Push SVG
-      run: |
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@://github.com"
-        git add ebird-card.svg
-        git diff-index --quiet HEAD || git commit -m "chore: Update eBird dynamic SVG card"
-        git push
+- uses: oseconds/eBird-readme-card@v1
 ----
 
----
-
-== 4. 향후 디벨롭 및 확장 계획 (Future Roadmap)
-
-* [ ] *Life List 누적 카운트 반영*: 프로필 상단의 전체 관찰 종 수 요약 텍스트 박스를 긁어와 SVG 카드 헤더 영역에 추가 노출.
-* [ ] *iNaturalist 다중 연동*: 동일 지역/일자에 매칭되는 iNaturalist의 생태 사진 미디어 URL이 있다면 SVG 내부에 `<image>` 태그로 임베딩하여 가시성 극대화.
-* [ ] *오픈소스 가상 액션화*: 위 코드를 패키징하여 타 유저들도 `uses: user/ebird-readme-card@v1` 형태로 간편하게 도입할 수 있도록 마켓플레이스 빌드업 검토.
+The long-term goal is to provide a reusable GitHub Action similar to github-readme-stats.
