@@ -21,7 +21,7 @@ jobs:
 
     - name: Run Scraper & API Quick Test
       env:
-        EBIRD_USER_ID: ${{ secrets.EBIRD_USER_ID }}
+        EBIRD_USER_ID: ${{ vars.EBIRD_USER_ID }}
         EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
       # 별도 파일 분리 없이, 환경 변수가 정상 연동되는지 인라인 파이썬 코드로 즉시 검증합니다.
       run: |
