@@ -129,27 +129,33 @@ def main():
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
 
-    # Write to GitHub Actions Step Summary (리스트 결합 방식으로 에디터 깨짐 방지)
+    # Write to GitHub Actions Step Summary (복사 버튼이 있는 코드 블록 버전)
     step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary_path:
         try:
-            svg_url = f"https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path}"
-            png_url = f"https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path}"
+            svg_url = f"[https://raw.githubusercontent.com/](https://raw.githubusercontent.com/){github_repo}/main/{clean_svg_path}"
+            png_url = f"[https://raw.githubusercontent.com/](https://raw.githubusercontent.com/){github_repo}/main/{clean_png_path}"
 
             summary_lines = [
                 "### 🎉 eBird Card Update Complete!",
                 "",
-                "Here are your generated cards. Click the links to preview, or copy the markdown below:",
+                "Here are your generated cards. Click the links to preview, or use the **copy button** on the code blocks below:",
                 "",
                 "---",
                 "#### 📄 SVG Card (GitHub / Notion)",
                 f"- **Direct Preview Link**: [View SVG Image]({svg_url})",
-                f"- **Markdown Code**: `![eBird Card]({svg_url})`",
+                "- **Markdown Code**:",
+                "```markdown",
+                f"![eBird Card]({svg_url})",
+                "```",
                 "",
                 "---",
                 "#### 🖼️ PNG Card (Discord / Blog / Slack)",
                 f"- **Direct Preview Link**: [View PNG Image]({png_url})",
-                f"- **Markdown Code**: `![eBird Card]({png_url})`"
+                "- **Markdown Code**:",
+                "```markdown",
+                f"![eBird Card]({png_url})",
+                "```"
             ]
             
             with open(step_summary_path, "a", encoding="utf-8") as f:
