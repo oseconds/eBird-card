@@ -85,9 +85,9 @@ def main():
     
     right_details_svg = ""
     if location_mode != "none" and last_location:
+        # Location 값만 라벨 없이 출력
         right_details_svg += f"""
-        <text x="260" y="128" class="sub-label">Location:</text>
-        <text x="315" y="128" class="sub-value" title="{raw_location}">{last_location}</text>
+        <text x="260" y="128" class="sub-value" title="{raw_location}" style="fill: #8b949e;">{last_location}</text>
         """
     
     right_details_svg += f"""
