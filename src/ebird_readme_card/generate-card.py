@@ -138,9 +138,9 @@ def main():
 
 Here are your generated card links. Click or copy as needed:
 
-- **SVG URL (clickable)**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})
+- **SVG**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})
   - **Markdown (copy ready)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})`
-- **PNG URL (clickable)**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})
+- **PNG**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})
   - **Markdown (copy ready)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})`
 """
             with open(step_summary_path, "a", encoding="utf-8") as f:
