@@ -1,0 +1,25 @@
+name: Update eBird Card
+
+on:
+  workflow_dispatch:
+    inputs:
+      zip_url:
+        description: 'eBird ZIP Download URL'
+        required: true
+        type: string
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Run script with input URL
+        run: |
+          echo "입력받은 링크: ${{ github.event.inputs.zip_url }}"
+          # 여기에 파이썬 스크립트 실행 명령어를 넣으면 됩니다.
