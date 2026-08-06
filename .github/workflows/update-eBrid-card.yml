@@ -19,7 +19,10 @@ jobs:
         with:
           python-version: '3.10'
           
-      - name: Run script with input URL
-        run: |
-          echo "입력받은 링크: ${{ github.event.inputs.zip_url }}"
-          # 여기에 파이썬 스크립트 실행 명령어를 넣으면 됩니다.
+      - name: Install dependencies
+        run: pip install pandas requests # 필요한 라이브러리 설치
+          
+      - name: Run Python script
+        run: python src/scraper.py
+        env:
+          ZIP_URL: ${{ github.event.inputs.zip_url }} # 입력받은 링크를 환경변수로 주입!
