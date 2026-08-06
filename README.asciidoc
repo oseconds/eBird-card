@@ -1,30 +1,64 @@
+
 = eBird-readme-card
 :revdate: 2026-08-06
 :toc: left
-:toc-title: Table of Contents
+:toclevels: 3
 :icons: font
 :source-highlighter: rouge
 
-== Project Overview
+image::docs/banner.png[eBird-readme-card,align=center]
 
-eBird-readme-card automatically generates a GitHub-ready SVG card from a user's public eBird activity.
+[.lead]
+Generate a beautiful GitHub profile card from your public eBird activity.
 
-== Goals
+image::docs/demo.svg[Demo,align=center]
 
-* Scrape recent public checklist IDs.
-* Combine scraped IDs with official eBird API data.
-* Render a dark-themed SVG using Jinja2 templates.
-* Update automatically through GitHub Actions.
-* Eventually publish as a reusable GitHub Action.
+[NOTE]
+====
+🚧 This project is currently under active development.
+
+The architecture and public API may change before the first stable release.
+====
+
+== Why?
+
+Birders often share their GitHub profile as a personal portfolio, but there is currently no simple way to showcase recent eBird activity directly inside a README.
+
+While the official eBird API provides rich observation data, it intentionally does not expose every user-oriented view required for a GitHub profile widget.
+
+**eBird-readme-card** bridges that gap.
+
+Instead of replacing the official API, it combines publicly available profile information with official eBird endpoints to generate a clean, automatically updated SVG card.
+
+Every day, GitHub Actions refreshes the card and commits the newest version back to your repository.
+
+The result is a lightweight widget that behaves similarly to projects such as:
+
+* github-readme-stats
+* waka-readme-stats
+* spotify-github-profile
+
+but for birding.
+
+== Features
+
+* ✨ Beautiful SVG card designed for GitHub Dark Mode
+* 🐦 Recent observations from your public eBird profile
+* 🔗 Official eBird API enrichment
+* 🎨 Jinja2-based SVG template system
+* 🤖 Fully automated with GitHub Actions
+* 🔒 Credentials stored using GitHub Secrets
+* ⚡ Fast static SVG generation
+* 📦 Planned reusable GitHub Action
 
 [source,yaml]
 ----
 - uses: oseconds/eBird-readme-card@v1
+
   with:
     ebird_user_id: ${{ secrets.EBIRD_USER_ID }}
     ebird_api_key: ${{ secrets.EBIRD_API_KEY }}
 ----
-
 == Architecture
 
 [mermaid]
