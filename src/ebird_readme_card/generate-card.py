@@ -1,0 +1,103 @@
+import os
+import io
+import zipfile
+import requests
+import pandas as pd
+from datetime import datetime
+
+def main():
+    # 1. GitHub Actions에서 넘겨준 ZIP 다운로드 링크 가져오기
+    zip_url = os.environ.get("ZIP_URL")
+    
+    if not zip_url:
+        print("❌ 에러: ZIP_URL 환경변수가 없습니다. 링크를 제대로 입력했는지 확인해주세요.")
+        exit(1)
+
+    print("📥 eBird 데이터 다운로드 중...")
+    
+    try:
+        # 2. 링크에서 ZIP 파일 다운로드
+        response = requests.get(zip_url)
+        response.raise_for_status()
+
+        # 3. 보안: 하드디스크에 저장하지 않고 메모리(io.BytesIO)에서 압축 해제
+        with zipfile.ZipFile(io.BytesIO(response.content)) as z:
+            # 보통 eBird 압축파일 안에는 'MyEBirdData.csv'가 있습니다. 
+            # 혹시 이름이 다를 수 있으니 가장 첫 번째 csv 파일을 찾습니다.
+            csv_filename = [name for name in z.namelist() if name.endswith('.csv')][0]
+            
+            print(f"📄 CSV 파일 발견: {csv_filename}")
+            
+            # 4. 메모리 상에서 Pandas로 CSV 읽기
+            with z.open(csv_filename) as csv_file:
+                df = pd.read_csv(csv_file)
+                
+    except Exception as e:
+        print(f"❌ 데이터를 다운로드하거나 읽는 중 오류가 발생했습니다: {e}")
+        exit(1)
+
+    # 5. 통계 데이터 분석
+    print("📊 데이터 분석 중...")
+    # eBird 데이터 기본 컬럼명: 'Common Name'(종), 'Submission ID'(체크리스트 ID)
+    total_species = df['Common Name'].nunique()
+    total_checklists = df['Submission ID'].nunique()
+    total_observations = len(df)
+    
+    # 마지막 관찰일 (선택 사항 - Date 컬럼이 있다고 가정)
+    try:
+        df['Date'] = pd.to_datetime(df['Date'])
+        last_birding_date = df['Date'].max().strftime("%Y-%m-%d")
+    except:
+        last_birding_date = "N/A"
+
+    today_date = datetime.now().strftime("%Y-%m-%d")
+
+    # 6. SVG 카드 디자인 및 생성 (다크 테마 예시)
+    print("🎨 프로필 카드(SVG) 생성 중...")
+    
+    svg_template = f"""
+    <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 200">
+        <style>
+            .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
+            .title {{ font: 600 20px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+            .stat-label {{ font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+            .stat-value {{ font: 700 16px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+            .footer {{ font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; }}
+            .icon {{ fill: #3fb950; }}
+        </style>
+        
+        <!-- 배경 -->
+        <rect width="100%" height="100%" class="bg"/>
+        
+        <!-- 제목 -->
+        <text x="30" y="40" class="title">🔭 My eBird Exploration</text>
+        
+        <!-- 통계: 관찰 종 수 -->
+        <text x="30" y="85" class="stat-label">Total Species:</text>
+        <text x="180" y="85" class="stat-value">{total_species} 종</text>
+        
+        <!-- 통계: 체크리스트 수 -->
+        <text x="30" y="115" class="stat-label">Total Checklists:</text>
+        <text x="180" y="115" class="stat-value">{total_checklists} 개</text>
+        
+        <!-- 통계: 총 기록 수 -->
+        <text x="30" y="145" class="stat-label">Total Observations:</text>
+        <text x="180" y="145" class="stat-value">{total_observations} 건</text>
+
+        <!-- 최근 탐조일 -->
+        <text x="280" y="85" class="stat-label">Last Birding:</text>
+        <text x="280" y="110" class="stat-value" style="fill: #3fb950;">{last_birding_date}</text>
+
+        <!-- 업데이트 날짜 -->
+        <text x="30" y="180" class="footer">Last updated: {today_date}</text>
+    </svg>
+    """
+
+    # 7. 완성된 SVG를 파일로 저장 (리포지토리에 커밋될 파일)
+    with open("ebird-card.svg", "w", encoding="utf-8") as f:
+        f.write(svg_template.strip())
+
+    print("✅ 성공적으로 ebird-card.svg 파일을 생성했습니다!")
+
+if __name__ == "__main__":
+    main()
