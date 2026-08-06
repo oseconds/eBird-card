@@ -39,9 +39,13 @@ def main():
     total_checklists = df['Submission ID'].nunique()
     total_observations = len(df)
     
-    # Get customizable environment variables (with defaults)
-    location_mode = os.environ.get("LOCATION_MODE", "location").lower()
-    card_title = os.environ.get("CARD_TITLE", "🪶 My Feathered Log")
+    # Get environment variables with smart fallbacks
+    location_mode = os.environ.get("LOCATION_MODE", "location").strip().lower()
+    if not location_mode:
+        location_mode = "location"
+        
+    card_title_env = os.environ.get("CARD_TITLE", "").strip()
+    card_title = card_title_env if card_title_env else "🪶 My Feathered Log"
     
     # Get the latest observation record details (Date, Bird Name, Location)
     try:
