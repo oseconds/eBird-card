@@ -22,10 +22,7 @@ def main():
 
         # 3. 보안: 하드디스크에 저장하지 않고 메모리(io.BytesIO)에서 압축 해제
         with zipfile.ZipFile(io.BytesIO(response.content)) as z:
-            # 보통 eBird 압축파일 안에는 'MyEBirdData.csv'가 있습니다. 
-            # 혹시 이름이 다를 수 있으니 가장 첫 번째 csv 파일을 찾습니다.
             csv_filename = [name for name in z.namelist() if name.endswith('.csv')][0]
-            
             print(f"📄 CSV 파일 발견: {csv_filename}")
             
             # 4. 메모리 상에서 Pandas로 CSV 읽기
@@ -38,12 +35,10 @@ def main():
 
     # 5. 통계 데이터 분석
     print("📊 데이터 분석 중...")
-    # eBird 데이터 기본 컬럼명: 'Common Name'(종), 'Submission ID'(체크리스트 ID)
     total_species = df['Common Name'].nunique()
     total_checklists = df['Submission ID'].nunique()
     total_observations = len(df)
     
-    # 마지막 관찰일 (선택 사항 - Date 컬럼이 있다고 가정)
     try:
         df['Date'] = pd.to_datetime(df['Date'])
         last_birding_date = df['Date'].max().strftime("%Y-%m-%d")
@@ -52,7 +47,7 @@ def main():
 
     today_date = datetime.now().strftime("%Y-%m-%d")
 
-    # 6. SVG 카드 디자인 및 생성 (다크 테마 예시)
+    # 6. SVG 카드 디자인 및 생성
     print("🎨 프로필 카드(SVG) 생성 중...")
     
     svg_template = f"""
@@ -66,38 +61,37 @@ def main():
             .icon {{ fill: #3fb950; }}
         </style>
         
-        <!-- 배경 -->
         <rect width="100%" height="100%" class="bg"/>
-        
-        <!-- 제목 -->
         <text x="30" y="40" class="title">🔭 My eBird Exploration</text>
         
-        <!-- 통계: 관찰 종 수 -->
         <text x="30" y="85" class="stat-label">Total Species:</text>
         <text x="180" y="85" class="stat-value">{total_species} 종</text>
         
-        <!-- 통계: 체크리스트 수 -->
         <text x="30" y="115" class="stat-label">Total Checklists:</text>
         <text x="180" y="115" class="stat-value">{total_checklists} 개</text>
         
-        <!-- 통계: 총 기록 수 -->
         <text x="30" y="145" class="stat-label">Total Observations:</text>
         <text x="180" y="145" class="stat-value">{total_observations} 건</text>
 
-        <!-- 최근 탐조일 -->
         <text x="280" y="85" class="stat-label">Last Birding:</text>
         <text x="280" y="110" class="stat-value" style="fill: #3fb950;">{last_birding_date}</text>
 
-        <!-- 업데이트 날짜 -->
         <text x="30" y="180" class="footer">Last updated: {today_date}</text>
     </svg>
     """
 
-    # 7. 완성된 SVG를 파일로 저장 (리포지토리에 커밋될 파일)
-    with open("ebird-card.svg", "w", encoding="utf-8") as f:
+    # 7. 환경변수(OUTPUT_PATH)로 저장 경로 지정 (없으면 기본값 "ebird-card.svg")
+    output_path = os.environ.get("OUTPUT_PATH", "ebird-card.svg")
+    
+    # 지정한 경로에 폴더가 없으면 자동으로 생성
+    dir_name = os.path.dirname(output_path)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
+
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(svg_template.strip())
 
-    print("✅ 성공적으로 ebird-card.svg 파일을 생성했습니다!")
+    print(f"✅ 성공적으로 {output_path} 파일을 생성했습니다!")
 
 if __name__ == "__main__":
     main()
