@@ -42,7 +42,7 @@ class EBirdProfileScraper:
             print(f"❌ 스크래핑 중 예외 발생: {e}")
             return []
 
-)
+
 
               
 from jinja2 import Template
