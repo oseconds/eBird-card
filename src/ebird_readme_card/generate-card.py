@@ -72,16 +72,17 @@ def main():
     <text x="315" y="150" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
     """
 
+    # Noto Sans CJK 폰트를 적용하여 한글 및 일본어가 깨지지 않도록 설정
     svg_template = f"""
     <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 200">
         <style>
             .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
-            .title {{ font: 600 20px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
-            .stat-label {{ font: 400 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-            .stat-value {{ font: 700 16px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-            .sub-label {{ font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-            .sub-value {{ font: 600 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-            .footer {{ font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; }}
+            .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
+            .stat-label {{ font: 400 14px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+            .stat-value {{ font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+            .sub-label {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+            .sub-value {{ font: 600 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+            .footer {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; }}
         </style>
         
         <rect width="100%" height="100%" class="bg"/>
@@ -129,7 +130,7 @@ def main():
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
 
-    # Write to GitHub Actions Step Summary (마크다운 충돌 방지 버전)
+    # Write to GitHub Actions Step Summary
     step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary_path:
         try:
