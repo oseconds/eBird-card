@@ -1,4 +1,4 @@
-# eBird-readme-card
+# 🐦eBird-Card
 
 > Turn your birding activity into a beautiful GitHub profile card.
 
@@ -9,7 +9,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 ## 🚀 Demo & Preview
 
 <p align="center">
-  <img src="ebird-card.svg" alt="eBird README Card" width="450">
+  <img src="ebird-card.svg" alt="eBird Card" width="450">
 </p>
 
 A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.
@@ -43,19 +43,32 @@ A simple way to showcase your recent eBird activity, total species, and latest s
 ## 🛠️ How to Use
 
 1. **Fork this repository** to your GitHub account.
-2. **Request your eBird data** and get the download ZIP link (as shown above).
+2. **Request your eBird data** from the eBird website and get your download ZIP link.
 3. **Run the GitHub Action**:
+* Go to your repository's **Actions** tab.
+* Select **Update eBird Card** from the left sidebar.
+* Click **Run workflow**, paste your eBird ZIP download URL, select your location display mode, and click **Run workflow**.
 
-   [![Run Workflow](https://img.shields.io/badge/▶_Run_Workflow-58a6ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/oseconds/eBird-card/actions/workflows/generate-eBrid-card.yml)
-   - Go to your repository's **Actions** tab.
-   - Select **Update README cards**.
-   - Click **Run workflow**.
-   - Paste your eBird ZIP download URL, select your preferred **Location Display Mode**, and optionally enter a **Custom Title**.
-4. **Add to your GitHub Profile README**:
-   
-   `![eBird Card](https://raw.githubusercontent.com/<your-github-username>/eBird-readme-card/main/ebird-card.svg)`
-   
-   *(Make sure to replace `<your-github-username>` with your actual GitHub username!)*
+
+4. **Copy & Paste your Card**:
+* Once the action completes, click on the workflow run and check the **Summary** page.
+* You will find the complete markdown code ready with a copy button, automatically tailored with your username!
+* Click the copy button and paste it into your profile `README.md` or Notion.
+
+
+
+---
+
+### 🚀 Quick Action Badge (Optional)
+
+If you want to add a workflow shortcut badge to the top of your repository, use the code below:
+*(Make sure to replace `<your-github-username>` with your actual GitHub username if you forked it!)*
+
+
+[![Run Workflow](https://img.shields.io/badge/▶_Run_Workflow-58a6ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/<your-github-username>/eBird-card/actions/workflows/generate-eBrid-card.yml)
+```
+[![Run Workflow](https://github.com/<your-github-username>/eBird-card/actions/workflows/generate-eBrid-card.yml/badge.svg?event=workflow_dispatch)](https://github.com/<your-github-username>/eBird-card/actions/workflows/generate-eBrid-card.yml)
+```
 
 ---
 
