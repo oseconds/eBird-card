@@ -72,7 +72,7 @@ def main():
     """
 
     svg_template = f"""
-    <svg width="450" height="200" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 450 200">
+    <svg width="450" height="200" xmlns="(http://www.w3.org/2000/svg)" viewBox="0 0 450 200">
         <style>
             .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
             .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
