@@ -1,0 +1,37 @@
+name: Generate eBird README Card
+
+on:
+  schedule:
+    - cron: '0 15 * * *' # 매일 한국 시간 자정(KST 00:00) 자동 실행
+  workflow_dispatch:   # 모바일 수동 실행용 재생 버튼 활성화
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        pip install requests beautifulsoup4 jinja2
+
+    - name: Execute Main Script
+      env:
+        EBIRD_USER_ID: ${{ vars.EBIRD_USER_ID }}
+        EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
+      run: python src/ebird_readme_card/main.py
+
+    - name: Commit and Push SVG Card
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@://github.com"
+        git add ebird-card.svg
+        # 변경 사항이 있을 때만 커밋을 수행하여 에러를 방지합니다.
+        git diff-index --quiet HEAD || git commit -m "chore: Update real-time eBird SVG card"
+        git push
