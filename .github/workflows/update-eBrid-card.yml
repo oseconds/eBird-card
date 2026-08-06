@@ -1,0 +1,28 @@
+name: Update eBird Card
+
+on:
+  workflow_dispatch:
+    inputs:
+      zip_url:
+        description: 'eBird ZIP Download URL'
+        required: true
+        type: string
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Install dependencies
+        run: pip install pandas requests # 필요한 라이브러리 설치
+          
+      - name: Run Python script
+        run: python src/scraper.py
+        env:
+          ZIP_URL: ${{ github.event.inputs.zip_url }} # 입력받은 링크를 환경변수로 주입!
