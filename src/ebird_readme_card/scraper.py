@@ -42,16 +42,7 @@ class EBirdProfileScraper:
             print(f"❌ 스크래핑 중 예외 발생: {e}")
             return []
 
-if __name__ == "__main__":
-    # 로컬 테스트용 실행 코드 (.env 파일에 EBIRD_USER_ID가 적혀있어야 합니다)
-    from dotenv import load_dotenv
-    load_dotenv()
-    
-    try:
-        scraper = EBirdProfileScraper()
-        scraper.fetch_recent_checklist_ids()
-    except Exception as e:
-        print(e)
+)
 
               
 from jinja2 import Template
