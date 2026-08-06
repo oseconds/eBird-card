@@ -72,9 +72,8 @@ def main():
     <text x="315" y="150" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
     """
 
-    # Noto Sans CJK 폰트를 적용하여 한글 및 일본어가 깨지지 않도록 설정
     svg_template = f"""
-    <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 200">
+    <svg width="450" height="200" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 450 200">
         <style>
             .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
             .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
@@ -130,21 +129,32 @@ def main():
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
 
-    # Write to GitHub Actions Step Summary
+    # Write to GitHub Actions Step Summary (리스트 결합 방식으로 에디터 깨짐 방지)
     step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary_path:
         try:
-            summary_content = f"""### 🎉 eBird Card Update Complete!
+            svg_url = f"https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path}"
+            png_url = f"https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path}"
 
-Here are your generated card links. Click or copy as needed:
-
-- **SVG**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})
-  - **Markdown (copy ready)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_svg_path})`
-- **PNG**: [https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path}](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})
-  - **Markdown (copy ready)**: `![eBird Card](https://raw.githubusercontent.com/{github_repo}/main/{clean_png_path})`
-"""
+            summary_lines = [
+                "### 🎉 eBird Card Update Complete!",
+                "",
+                "Here are your generated cards. Click the links to preview, or copy the markdown below:",
+                "",
+                "---",
+                "#### 📄 SVG Card (GitHub / Notion)",
+                f"- **Direct Preview Link**: [View SVG Image]({svg_url})",
+                f"- **Markdown Code**: `![eBird Card]({svg_url})`",
+                "",
+                "---",
+                "#### 🖼️ PNG Card (Discord / Blog / Slack)",
+                f"- **Direct Preview Link**: [View PNG Image]({png_url})",
+                f"- **Markdown Code**: `![eBird Card]({png_url})`"
+            ]
+            
             with open(step_summary_path, "a", encoding="utf-8") as f:
-                f.write(summary_content)
+                f.write("\n".join(summary_lines))
+                
             print("✨ Successfully published results to GitHub Actions Step Summary!")
         except Exception as e:
             print(f"⚠️ Failed to write step summary: {e}")
