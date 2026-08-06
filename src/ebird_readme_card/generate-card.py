@@ -57,12 +57,13 @@ def main():
     print("🎨 Generating profile card (SVG)...")
     
     svg_template = f"""
-    <svg width="450" height="220" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 220">
+    <svg width="450" height="240" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 240">
         <style>
             .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
             .title {{ font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
             .stat-label {{ font: 400 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
             .stat-value {{ font: 700 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+            .sub-value {{ font: 400 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
             .footer {{ font: 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; }}
         </style>
         
@@ -70,24 +71,27 @@ def main():
         <text x="30" y="35" class="title">🔭 My eBird Exploration</text>
         
         <!-- Overall Stats -->
-        <text x="30" y="75" class="stat-label">Total Species:</text>
-        <text x="160" y="75" class="stat-value">{total_species}</text>
+        <text x="30" y="70" class="stat-label">Total Species:</text>
+        <text x="160" y="70" class="stat-value">{total_species}</text>
         
-        <text x="30" y="100" class="stat-label">Total Checklists:</text>
-        <text x="160" y="100" class="stat-value">{total_checklists}</text>
+        <text x="30" y="95" class="stat-label">Total Checklists:</text>
+        <text x="160" y="95" class="stat-value">{total_checklists}</text>
         
-        <text x="30" y="125" class="stat-label">Total Observations:</text>
-        <text x="160" y="125" class="stat-value">{total_observations}</text>
+        <text x="30" y="120" class="stat-label">Total Observations:</text>
+        <text x="160" y="120" class="stat-value">{total_observations}</text>
 
-        <!-- Latest Birding Record (Safe from GPS exposure, shows Name & Location) -->
-        <text x="30" y="155" class="stat-label">Last Bird Sighted:</text>
-        <text x="160" y="155" class="stat-value" style="fill: #3fb950;">{last_bird}</text>
+        <!-- Last Birding Session Details -->
+        <text x="30" y="155" class="stat-label">Last Birding:</text>
+        <text x="160" y="155" class="stat-value" style="fill: #3fb950;">{last_date}</text>
 
-        <text x="30" y="180" class="stat-label">Last Location:</text>
-        <text x="160" y="180" class="stat-value">{last_location} ({last_date})</text>
+        <text x="50" y="180" class="stat-label">📍 Location:</text>
+        <text x="135" y="180" class="sub-value">{last_location}</text>
+
+        <text x="50" y="202" class="stat-label">🦅 Bird Sighted:</text>
+        <text x="135" y="202" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
 
         <!-- Footer Date -->
-        <text x="30" y="205" class="footer">Last updated: {today_date}</text>
+        <text x="30" y="226" class="footer">Last updated: {today_date}</text>
     </svg>
     """
 
