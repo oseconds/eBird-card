@@ -1,4 +1,4 @@
-name: Update README cards
+name: Update eBird cards
 
 on:
   workflow_dispatch:
@@ -31,7 +31,7 @@ jobs:
       contents: write
 
     env:
-      OUTPUT_PATH: "ebird-card.svg" 
+      OUTPUT_PATH: "./assets/ebird-card.svg" 
 
     steps:
       - uses: actions/checkout@v4
