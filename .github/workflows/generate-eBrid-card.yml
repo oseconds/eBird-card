@@ -34,6 +34,7 @@ on:
 
 jobs:
   build:
+    name: Generate eBird Card
     runs-on: ubuntu-latest
 
     permissions:

@@ -37,13 +37,16 @@ A simple way to showcase your recent eBird activity, total species, and latest s
    - *(Note: If you do not receive an email within 24 hours, check your spam folder, verify your email address, and ensure `do-not-reply@ebird.org` is added to your allowed contacts list before trying again).*
 4. **Get the Download Link**: Open the email when it arrives, copy the long S3 download link (`https://...`), and paste it into your GitHub Actions workflow when generating your stats card!
 
+
 ---
 
 ## 🛠️ How to Use
 
 1. **Fork this repository** to your GitHub account.
 2. **Request your eBird data** and get the download ZIP link (as shown above).
-3. **Run the GitHub Action**: 
+3. **Run the GitHub Action**:
+
+   [![Generate eBird card](https://github.com/oseconds/eBird-card/actions/workflows/generate-eBrid-card.yml/badge.svg?event=workflow_dispatch)](https://github.com/oseconds/eBird-card/actions/workflows/generate-eBrid-card.yml)
    - Go to your repository's **Actions** tab.
    - Select **Update README cards**.
    - Click **Run workflow**.
