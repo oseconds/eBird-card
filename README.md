@@ -65,9 +65,9 @@ If you want to add a workflow shortcut badge to the top of your repository, use 
 *(Make sure to replace `<your-github-username>` with your actual GitHub username if you forked it!)*
 
 
-[![Run Workflow](https://img.shields.io/badge/▶_Run_Workflow-58a6ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/<your-github-username>/eBird-card/actions/workflows/generate-eBrid-card.yml)
+[![Run Workflow](https://img.shields.io/badge/▶_Run_Workflow-58a6ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/oseconds/eBird-card/actions/workflows/generate-eBrid-card.yml)
 ```
-[![Run Workflow](https://github.com/<your-github-username>/eBird-card/actions/workflows/generate-eBrid-card.yml/badge.svg?event=workflow_dispatch)](https://github.com/<your-github-username>/eBird-card/actions/workflows/generate-eBrid-card.yml)
+[![Run Workflow](https://img.shields.io/badge/▶_Run_Workflow-58a6ff?style=for-the-badge&logo=github&logoColor=white)](https://github.com/<your-github-username>/eBird-card/actions/workflows/generate-eBrid-card.yml)
 ```
 
 ---
