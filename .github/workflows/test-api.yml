@@ -1,0 +1,81 @@
+name: Debug eBird API and Scraper
+
+on:
+  workflow_dispatch: # 깃허브 웹 페이지에서 'Run workflow' 버튼을 눌러 수동 실행할 수 있게 합니다.
+
+jobs:
+  debug-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Dependencies
+      run: |
+        pip install requests beautifulsoup4
+
+    - name: Run Scraper & API Quick Test
+      env:
+        EBIRD_USER_ID: ${{ secrets.EBIRD_USER_ID }}
+        EBIRD_API_KEY: ${{ secrets.EBIRD_API_KEY }}
+      # 별도 파일 분리 없이, 환경 변수가 정상 연동되는지 인라인 파이썬 코드로 즉시 검증합니다.
+      run: |
+        import os
+        import re
+        import requests
+        from bs4 import BeautifulSoup
+
+        user_id = os.environ.get("EBIRD_USER_ID")
+        api_key = os.environ.get("EBIRD_API_KEY")
+
+        print("=== 1단계: 환경 변수 주입 확인 ===")
+        print(f"EBIRD_USER_ID 설정 여부: {bool(user_id)} (길이: {len(user_id) if user_id else 0})")
+        print(f"EBIRD_API_KEY  설정 여부: {bool(api_key)}")
+
+        if not user_id or not api_key:
+            print("❌ Secrets 설정이 누락되었습니다. GitHub Settings를 다시 확인해주세요.")
+            exit(1)
+
+        print("\n=== 2단계: eBird 공개 프로필 스크래핑 테스트 ===")
+        url = f"https://ebird.org{user_id}/world"
+        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+        
+        try:
+            res = requests.get(url, headers=headers, timeout=10)
+            print(f"프로필 페이지 응답 코드: {res.status_code}")
+            if res.status_code == 200:
+                soup = BeautifulSoup(res.text, 'html.parser')
+                checklist_ids = list(set(re.findall(r'subId=(S\d+)', str(soup))))[:2]
+                print(f"✅ 발견된 최근 체크리스트 ID 목록: {checklist_ids}")
+            else:
+                print("❌ 프로필 스크래핑 실패 (계정이 비공개 상태이거나 ID가 잘못되었을 수 있습니다.)")
+                checklist_ids = []
+        except Exception as e:
+            print(f"❌ 스크래핑 중 오류 발생: {e}")
+            checklist_ids = []
+
+        print("\n=== 3단계: 공식 eBird API 연동 테스트 ===")
+        if checklist_ids:
+            target_sub_id = checklist_ids[0]
+            api_url = f"https://ebird.org{target_sub_id}"
+            api_headers = {"X-eBirdApiToken": api_key}
+            try:
+                api_res = requests.get(api_url, headers=api_headers, timeout=10)
+                print(f"공식 API 응답 코드: {api_res.status_code}")
+                if api_res.status_code == 200:
+                    print("✅ 공식 API 연동 성공!")
+                    data = api_res.json()
+                    print(f"📍 최근 탐조 장소: {data.get('loc', {}).get('name')}")
+                    print(f"📅 관찰 날짜: {data.get('obsDt')}")
+                else:
+                    print(f"❌ API 인증 실패 (상태 메시지: {api_res.text})")
+            except Exception as e:
+                print(f"❌ API 요청 중 오류 발생: {e}")
+        else:
+            print("⚠ 스크래핑된 체크리스트 ID가 없어 API 테스트를 건너뜁니다.")
+      shell: python
