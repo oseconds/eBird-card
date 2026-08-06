@@ -39,8 +39,9 @@ def main():
     total_checklists = df['Submission ID'].nunique()
     total_observations = len(df)
     
-    # Get Location Mode option
+    # Get customizable environment variables (with defaults)
     location_mode = os.environ.get("LOCATION_MODE", "location").lower()
+    card_title = os.environ.get("CARD_TITLE", "🪶 My Feathered Log")
     
     # Get the latest observation record details (Date, Bird Name, Location)
     try:
@@ -60,7 +61,7 @@ def main():
         else:  # default: 'location'
             raw_location = str(latest_row.get('Location', 'N/A'))
             
-        # 💡 장소 이름이 너무 길면(예: 18자 초과) 자동으로 잘라내고 '...' 붙이기
+        # Truncate location if too long (> 18 chars)
         max_len = 18
         if len(raw_location) > max_len:
             last_location = raw_location[:max_len] + "..."
@@ -78,7 +79,6 @@ def main():
     # 6. Generate SVG Profile Card Design
     print("🎨 Generating profile card (SVG)...")
     
-    # Build right-side sub-details (Location & Sighted Bird)
     right_details_svg = ""
     if location_mode != "none" and last_location:
         right_details_svg += f"""
@@ -104,7 +104,7 @@ def main():
         </style>
         
         <rect width="100%" height="100%" class="bg"/>
-        <text x="30" y="40" class="title">🔭 My eBird Exploration</text>
+        <text x="30" y="40" class="title">{card_title}</text>
         
         <!-- Left Stats -->
         <text x="30" y="85" class="stat-label">Total Species:</text>
@@ -127,9 +127,7 @@ def main():
     </svg>
     """
 
-    # 7. Save output path via environment variable (default: "ebird-card.svg")
     output_path = os.environ.get("OUTPUT_PATH", "ebird-card.svg")
-    
     dir_name = os.path.dirname(output_path)
     if dir_name:
         os.makedirs(dir_name, exist_ok=True)
