@@ -1,4 +1,4 @@
-name: Update eBird cards
+name: Generate eBird cards
 
 on:
   workflow_dispatch:
