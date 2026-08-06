@@ -8,6 +8,9 @@ on:
         required: true
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   run-script:
     runs-on: ubuntu-latest
@@ -25,4 +28,10 @@ jobs:
       - name: Run Python script
         run: python src/ebird_readme_card/generate-card.py
         env:
-          ZIP_URL: ${{ github.event.inputs.zip_url }} # 입력받은 링크를 환경변수로 주입!
+          ZIP_URL: ${{ github.event.inputs.zip_url }} # 입력받은 링크를 환경변수로 
+
+      - name: Commit and push generated card
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: assets/ebird-card.svg
+          commit_message: "🎨 Update eBird stats card [skip ci]"
