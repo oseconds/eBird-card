@@ -50,9 +50,9 @@ A simple way to showcase your recent eBird activity, total species, and latest s
    - Paste your eBird ZIP download URL, select your preferred **Location Display Mode**, and optionally enter a **Custom Title**.
 4. **Add to your GitHub Profile README**:
    
-   `![eBird Card](https://raw.githubusercontent.com/oseconds/eBird-readme-card/main/ebird-card.svg)`
+   `![eBird Card](https://raw.githubusercontent.com/<your-github-username>/eBird-readme-card/main/ebird-card.svg)`
    
-   *(Make sure to replace `oseconds` with your actual GitHub username!)*
+   *(Make sure to replace `<your-github-username>` with your actual GitHub username!)*
 
 ---
 
