@@ -136,7 +136,7 @@ def main():
         <text x="180" y="145" class="stat-value">{total_observations}</text>
 
         <text x="260" y="85" class="stat-label">Last Bird:</text>
-        <text x="260" y="105" style="font: 500 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
+        <text x="260" y="100" style="font: 500 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
 
         {right_details_svg}
 
