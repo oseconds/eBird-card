@@ -53,12 +53,12 @@ def main():
             with z.open(csv_file) as f: df = pd.read_csv(f)
     except: exit(1)
 
-    df = df.sort_values(by=pd.to_datetime(df['Date']))
+    df['Date'] = pd.to_datetime(df['Date'])
+    df = df.sort_values(by='Date')
     latest = df.drop_duplicates(subset=['Common Name'], keep='last').iloc[-1]
     bird_name, sci_name = latest['Common Name'], latest.get('Scientific Name', '')
     bird_image_data = get_inaturalist_image(sci_name)
 
-    # 폭 260px에 맞춘 이미지 좌표 조정 (x=195)
     image_element = f'''
         <clipPath id="rect-clip"><rect x="195" y="12" width="55" height="55" rx="6" ry="6" /></clipPath>
         <rect x="195" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
