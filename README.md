@@ -62,7 +62,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 ## 🛠️ How to Use
 
 1. **Fork this repository** to your GitHub account.
-2. **Request your eBird data** (See [How to Download Your eBird Data](#-how-to-download-your-ebird-data) if you don't have your ZIP download link yet).
+2. **Request your eBird data** ( [How to Download Your eBird Data](#-how-to-download-your-ebird-data) ).
 3. **Run the GitHub Action**:
    - Go to your repository's **Actions** tab.
    - Select **Update eBird Card** from the left sidebar.
