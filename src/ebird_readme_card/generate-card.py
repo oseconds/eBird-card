@@ -7,16 +7,6 @@ import requests
 import pandas as pd
 from datetime import datetime
 
-Python
-import os
-import io
-import re
-import zipfile
-import base64
-import requests
-import pandas as pd
-from datetime import datetime
-
 def get_twemoji_assets(emoji_str):
     """이모지를 다운로드하여 웹용 Base64와 CairoSVG용 임시 파일 경로를 각각 생성합니다."""
     try:
