@@ -102,7 +102,7 @@ def main():
     right_details_svg = ""
     # 💡 last_bird
     right_details_svg += f"""
-    <text x="260" y="122" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
+    <text x="260" y="125" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
     """
     
     # 💡 last_location
@@ -135,8 +135,8 @@ def main():
         <text x="30" y="145" class="stat-label">Total Observations:</text>
         <text x="180" y="145" class="stat-value">{total_observations}</text>
 
-        <text x="260" y="85" class="stat-label">Last Birding:</text>
-        <text x="260" y="103" style="font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
+        <text x="260" y="85" class="stat-label">Last Bird:</text>
+        <text x="260" y="100" style="font: 500 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
 
         {right_details_svg}
 
