@@ -9,7 +9,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 ## 🚀 Demo & Preview
 
 <p align="center">
-  <img src="ebird-card.svg" alt="eBird Card" width="450">
+  <img src="./assets/ebird-card.svg" alt="eBird Card" width="450">
 </p>
 
 A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.
