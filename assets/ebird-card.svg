@@ -25,7 +25,7 @@
         <text x="180" y="145" class="stat-value">412</text>
 
         <text x="260" y="85" class="stat-label">Last Bird:</text>
-        <text x="260" y="100" style="font: 500 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">2026-08-05</text>
+        <text x="260" y="102" style="font: 500 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">2026-08-05</text>
 
         
     <text x="260" y="125" style="font: 700 18px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="대륙검은지빠귀">대륙검은지빠귀</text>
@@ -34,4 +34,7 @@
         
 
         <text x="30" y="180" class="footer">Last updated: 2026-08-07</text>
+        <metadata>
+            Generated with eBird-card by 0seconds (https://github.com/oseconds/eBird-Card)
+        </metadata>
     </svg>
