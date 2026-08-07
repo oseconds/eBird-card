@@ -159,7 +159,7 @@ def main():
 
                 {right_details_svg}
 
-                <text x="300" y="180" class="footer">Last updated: {today_date}</text>
+                <text x="400" y="180" class="footer">Last updated: {today_date}</text>
                 
                 <rect width="100%" height="100%" fill="transparent" cursor="pointer"/>
             </a>
@@ -186,7 +186,7 @@ def main():
         os.makedirs(os.path.dirname(png_path) if os.path.dirname(png_path) else ".", exist_ok=True)
         try:
             import cairosvg
-            cairosvg.svg2png(bytestring=build_svg_string(png_title_element).encode('utf-8'), write_to=png_path, scale=2.0)
+            cairosvg.svg2png(bytestring=build_svg_string(png_title_element).encode('utf-8'), write_to=png_path, scale=2.0, unsafe=True)
             print(f"✅ Successfully generated {png_path} (High Resolution with Twemoji)!")
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
