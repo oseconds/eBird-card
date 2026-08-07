@@ -36,7 +36,8 @@ def get_twemoji_inline_svg_compact(emoji_str, x_offset):
             inner_match = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, re.DOTALL)
             if inner_match:
                 inner_content = inner_match.group(1)
-                return f'<g transform="translate({x_offset}, 9) scale(0.3)">{inner_content}</g>'
+                # 이모지 크기를 글자 크기에 맞게 scale(0.18)로 축소 및 위치 조정
+                return f'<g transform="translate({x_offset}, 10) scale(0.18)">{inner_content}</g>'
     except: return None
     return None
 
@@ -59,20 +60,22 @@ def main():
     bird_name, sci_name = latest['Common Name'], latest.get('Scientific Name', '')
     bird_image_data = get_inaturalist_image(sci_name)
 
-    # 텍스트 길이에 따른 SVG 가로폭 동적 계산 (최소 240px 보장)
-    max_text_len = max(len(str(bird_name)), len(str(sci_name)), len("Newest Lifer"))
-    svg_width = max(240, 77 + int(max_text_len * 7.5) + 15)
-
-    # 사진 위치: 왼쪽 고정 (x=12)
+    # 너비 계산 로직 강화 (텍스트 길이에 딱 맞게)
+    # 텍스트 시작점(75) + 글자당 너비(약 6.5px) * 가장 긴 텍스트 + 여백(15)
+    max_char_len = max(len("Newest Lifer"), len(bird_name), len(sci_name))
+    svg_width = 75 + int(max_char_len * 6.5) + 15
+    
+    # 사진 고정 위치 (x=10)
     image_element = f'''
-        <clipPath id="rect-clip"><rect x="12" y="12" width="55" height="55" rx="6" ry="6" /></clipPath>
-        <rect x="12" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
-        <image x="12" y="12" width="55" height="55" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rect-clip)"/>
+        <clipPath id="rect-clip"><rect x="10" y="12" width="55" height="55" rx="6" ry="6" /></clipPath>
+        <rect x="10" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
+        <image x="10" y="12" width="55" height="55" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rect-clip)"/>
     ''' if bird_image_data else '''
-        <rect x="12" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
+        <rect x="10" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
     '''
 
-    twemoji_svg = get_twemoji_inline_svg_compact('🐣', 77) or ''
+    # 이모지 (x=75) + 텍스트 시작점 (x=90)
+    twemoji_svg = get_twemoji_inline_svg_compact('🐣', 75) or ''
 
     svg_template = f"""
     <svg width="{svg_width}" height="80" viewBox="0 0 {svg_width} 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -85,9 +88,9 @@ def main():
             </style>
             <rect width="100%" height="100%" class="bg"/>
             {twemoji_svg}
-            <text x="95" y="22" class="title">Newest Lifer</text>
-            <text x="77" y="45" class="bird-name">{bird_name}</text>
-            <text x="77" y="60" class="sci-name">{sci_name}</text>
+            <text x="90" y="22" class="title">Newest Lifer</text>
+            <text x="75" y="45" class="bird-name">{bird_name}</text>
+            <text x="75" y="60" class="sci-name">{sci_name}</text>
             {image_element}
         </a>
     </svg>
