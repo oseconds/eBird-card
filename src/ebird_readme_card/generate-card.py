@@ -102,7 +102,7 @@ def main():
     right_details_svg = ""
     # 💡 last_bird
     right_details_svg += f"""
-    <text x="260" y="125" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
+    <text x="260" y="125" style="font: 700 18px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
     """
     
     # 💡 last_location
