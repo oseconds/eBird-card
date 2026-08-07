@@ -7,8 +7,18 @@ import requests
 import pandas as pd
 from datetime import datetime
 
-def get_twemoji_base64(emoji_str):
-    """이모지 문자열을 Twemoji 공식 SVG에서 PNG(Base64)로 변환해 가져옵니다."""
+Python
+import os
+import io
+import re
+import zipfile
+import base64
+import requests
+import pandas as pd
+from datetime import datetime
+
+def get_twemoji_assets(emoji_str):
+    """이모지를 다운로드하여 웹용 Base64와 CairoSVG용 임시 파일 경로를 각각 생성합니다."""
     try:
         codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
         hex_code = "-".join(codepoints)
@@ -17,13 +27,23 @@ def get_twemoji_base64(emoji_str):
         res = requests.get(url, timeout=5)
         
         if res.status_code == 200:
-            # SVG를 PNG 바이트로 변환 (모바일 호환성 확보)
+            import cairosvg
+            # PNG 바이너리로 변환
             png_bytes = cairosvg.svg2png(bytestring=res.content, scale=2.0)
+            
+            # 1. 웹/GitHub SVG용 Base64 Data URI
             b64_data = base64.b64encode(png_bytes).decode('utf-8')
-            return f"data:image/png;base64,{b64_data}"
+            web_href = f"data:image/png;base64,{b64_data}"
+            
+            # 2. CairoSVG 변환용 로컬 임시 파일 저장
+            temp_filename = "temp_emoji.png"
+            with open(temp_filename, "wb") as f:
+                f.write(png_bytes)
+                
+            return web_href, temp_filename
     except Exception as e:
-        print(f"⚠️ Twemoji PNG 변환 실패 ({emoji_str}): {e}")
-    return None
+        print(f"⚠️ Twemoji 처리 실패 ({emoji_str}): {e}")
+    return None, None
 
 def main():
     zip_url = os.environ.get("ZIP_URL")
@@ -82,75 +102,81 @@ def main():
 
     print("🎨 Processing title Twemoji & Generating profile card...")
     
-    # 💡 이모지 감지 정규식
+    # 💡 이모지 감지
     emoji_pattern = re.compile(r'[\U0001F000-\U0001FAFF\U00002600-\U000027BF]+')
     emoji_match = emoji_pattern.search(card_title)
+    text_part = emoji_pattern.sub('', card_title).strip()
     
+    web_href, temp_file = None, None
     if emoji_match:
-        emoji_str = emoji_match.group()
-        text_part = emoji_pattern.sub('', card_title).strip()
-        twemoji_b64 = get_twemoji_base64(emoji_str)
-        
-        if twemoji_b64:
-            title_svg_element = f'''
-            <image x="30" y="21" width="22" height="22" href="{twemoji_b64}" xlink:href="{twemoji_b64}"/>
-            <text x="58" y="40" class="title">{text_part}</text>
-            '''
-        else:
-            title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
+        web_href, temp_file = get_twemoji_assets(emoji_match.group())
+
+    # SVG 파일용 타이틀 엘리먼트 (Base64 Data URI 사용)
+    if web_href:
+        svg_title_element = f'<image x="30" y="21" width="22" height="22" href="{web_href}" xlink:href="{web_href}"/><text x="58" y="40" class="title">{text_part}</text>'
     else:
-        title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
-        
+        svg_title_element = f'<text x="30" y="40" class="title">{card_title}</text>'
+
+    # PNG 변환용 타이틀 엘리먼트 (안정적인 로컬 임시 파일 경로 사용)
+    if temp_file:
+        png_title_element = f'<image x="30" y="21" width="22" height="22" href="{temp_file}" xlink:href="{temp_file}"/><text x="58" y="40" class="title">{text_part}</text>'
+    else:
+        png_title_element = f'<text x="30" y="40" class="title">{card_title}</text>'
+
     right_details_svg = ""
-    # 💡 last_bird
     right_details_svg += f"""
-    <text x="260" y="125" style="font: 700 18px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
+    <text x="260" y="122" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
     """
     
-    # 💡 last_location
     if location_mode != "none" and last_location:
         right_details_svg += f"""
         <text x="260" y="145" class="sub-value" title="{raw_location}" style="fill: #8b949e;">{last_location}</text>
         """
 
-    svg_template = f"""
-    <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 200">
-        <style>
-            .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
-            .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; }}
-            .stat-label {{ font: 400 14px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-            .stat-value {{ font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-            .sub-label {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-            .sub-value {{ font: 600 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-            .footer {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; }}
-        </style>
-        
-        <rect width="100%" height="100%" class="bg"/>
-        {title_svg_element}
-        
-        <text x="30" y="85" class="stat-label">Total Species:</text>
-        <text x="180" y="85" class="stat-value">{total_species}</text>
-        
-        <text x="30" y="115" class="stat-label">Total Checklists:</text>
-        <text x="180" y="115" class="stat-value">{total_checklists}</text>
-        
-        <text x="30" y="145" class="stat-label">Total Observations:</text>
-        <text x="180" y="145" class="stat-value">{total_observations}</text>
+    # 공통 SVG 구조 템플릿 함수
+    def build_svg_string(title_element):
+        return f"""
+        <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 450 200">
+            <metadata>
+                Generated with eBird-card (https://github.com/{github_repo})
+            </metadata>
 
-        <text x="260" y="85" class="stat-label">Last Bird:</text>
-        <text x="260" y="102" style="font: 500 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
+            <a xlink:href="https://github.com/{github_repo}" target="_blank">
+                <style>
+                    .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
+                    .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; cursor: pointer; }}
+                    .stat-label {{ font: 400 14px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+                    .stat-value {{ font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+                    .sub-label {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+                    .sub-value {{ font: 600 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+                    .footer {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; text-anchor: end; }}
+                </style>
+                
+                <rect width="100%" height="100%" class="bg"/>
+                {title_element}
+                
+                <text x="30" y="85" class="stat-label">Total Species:</text>
+                <text x="180" y="85" class="stat-value">{total_species}</text>
+                
+                <text x="30" y="115" class="stat-label">Total Checklists:</text>
+                <text x="180" y="115" class="stat-value">{total_checklists}</text>
+                
+                <text x="30" y="145" class="stat-label">Total Observations:</text>
+                <text x="180" y="145" class="stat-value">{total_observations}</text>
 
-        {right_details_svg}
+                <text x="260" y="85" class="stat-label">Last Birding:</text>
+                <text x="260" y="103" style="font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
 
-        <text x="300" y="180" class="footer">Last updated: {today_date}</text>
-        <metadata>
-            Generated with eBird-card by 0seconds (https://github.com/oseconds/eBird-Card)
-        </metadata>
-    </svg>
-    """
+                {right_details_svg}
 
-    svg_content = svg_template.strip()
-    
+                <text x="300" y="180" class="footer">Last updated: {today_date}</text>
+                
+                <rect width="100%" height="100%" fill="transparent" cursor="pointer"/>
+            </a>
+        </svg>
+        """.strip()
+
+    # 파일 저장 경로 설정
     base, ext = os.path.splitext(output_path_env)
     svg_path = output_path_env if ext.lower() == '.svg' else f"{output_path_env}.svg"
     png_path = f"{base}.png" if ext.lower() == '.svg' else f"{output_path_env}.png"
@@ -158,20 +184,29 @@ def main():
     clean_svg_path = svg_path.lstrip("./")
     clean_png_path = png_path.lstrip("./")
 
+    # 1. SVG 파일 생성 (Base64 사용)
     if output_format in ["svg", "both"]:
         os.makedirs(os.path.dirname(svg_path) if os.path.dirname(svg_path) else ".", exist_ok=True)
         with open(svg_path, "w", encoding="utf-8") as f:
-            f.write(svg_content)
+            f.write(build_svg_string(svg_title_element))
         print(f"✅ Successfully generated {svg_path}!")
 
+    # 2. PNG 파일 생성 (로컬 임시 파일 사용 후 정리)
     if output_format in ["png", "both"]:
         os.makedirs(os.path.dirname(png_path) if os.path.dirname(png_path) else ".", exist_ok=True)
         try:
             import cairosvg
-            cairosvg.svg2png(bytestring=svg_content.encode('utf-8'), write_to=png_path, scale=2.0)
+            cairosvg.svg2png(bytestring=build_svg_string(png_title_element).encode('utf-8'), write_to=png_path, scale=2.0)
             print(f"✅ Successfully generated {png_path} (High Resolution with Twemoji)!")
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
+        finally:
+            # 사용이 끝난 임시 파일 삭제 정리
+            if temp_file and os.path.exists(temp_file):
+                try:
+                    os.remove(temp_file)
+                except:
+                    pass            
 
     # Write to GitHub Actions Step Summary
     step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
