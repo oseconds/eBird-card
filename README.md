@@ -8,30 +8,47 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 ## 🚀 Demo & Preview
 
+<div align="center">
 
-  <!-- 1. Main Stats Card -->
-  <strong>📊 Main Stats Card</strong><br>
-  <sub>Displays total species, checklists, observations, and your latest birding session.</sub><br><br>
-  <img src="./assets/ebird-card.svg" alt="eBird Main Stats Card" width="450"><br><br>
+### 📊 Main Stats Card
+<sub>Displays total species, checklists, observations, and your latest birding session.</sub>
 
-  <!-- 2. Frequency Ranking Card -->
-  <strong>🏆 Frequency Ranking Card</strong><br>
-  <sub>Shows your most frequently observed and recorded bird species.</sub><br><br>
-  <img src="./assets/freq-ranking.svg" alt="Frequency Ranking Card" width="450"><br><br>
+<br><br>
 
-  <!-- 3. Newest Lifer Card (Standard) -->
-  <strong>🐣 Newest Lifer Card (Standard)</strong><br>
-  <sub>Highlights detailed information about your most recently observed lifer.</sub><br><br>
-  <img src="./assets/new-lifer.svg" alt="New Lifer Card" width="450"><br><br>
+<img src="./assets/ebird-card.svg" alt="eBird Main Stats Card" width="450">
 
-  <!-- 4. Newest Lifer Card (Compact) -->
-  <strong>🐣 Newest Lifer Card (Compact)</strong><br>
-  <sub>A space-saving, single-line version of the lifer card.</sub><br><br>
-  <img src="./assets/new-lifer-compact.svg" alt="New Lifer Compact Card">
+<br><br><br>
 
+### 🏆 Frequency Ranking Card
+<sub>Shows your most frequently observed and recorded bird species.</sub>
 
-  <em>A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.</em>
-</p>
+<br><br>
+
+<img src="./assets/freq-ranking.svg" alt="Frequency Ranking Card" width="450">
+
+<br><br><br>
+
+### 🐣 Newest Lifer Card (Standard)
+<sub>Highlights detailed information about your most recently observed lifer.</sub>
+
+<br><br>
+
+<img src="./assets/new-lifer.svg" alt="New Lifer Card" width="450">
+
+<br><br><br>
+
+### 🐣 Newest Lifer Card (Compact)
+<sub>A space-saving, single-line version of the lifer card.</sub>
+
+<br><br>
+
+<img src="./assets/new-lifer-compact.svg" alt="New Lifer Compact Card">
+
+<br><br>
+
+*A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.*
+
+</div>
 
 ---
 
