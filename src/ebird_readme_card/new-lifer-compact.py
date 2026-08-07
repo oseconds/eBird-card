@@ -25,7 +25,7 @@ def get_inaturalist_image(scientific_name):
         return None
     except: return None
 
-def get_twemoji_inline_svg_compact(emoji_str, x_offset):
+def get_twemoji_inline_svg_compact(emoji_str, x_offset, y_offset=3):
     try:
         codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
         hex_code = "-".join(codepoints)
@@ -36,8 +36,8 @@ def get_twemoji_inline_svg_compact(emoji_str, x_offset):
             inner_match = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, re.DOTALL)
             if inner_match:
                 inner_content = inner_match.group(1)
-                return f'<g transform="translate({x_offset}, 4) scale(0.26)">{inner_content}</g>'
-    except: return None
+                return f'<g transform="translate({x_offset}, {y_offset}) scale(0.26)">{inner_content}</g>'
+    except: pass
     return None
 
 def main():
@@ -62,7 +62,6 @@ def main():
     max_char_len = max(len("Newest Lifer"), len(bird_name), len(sci_name))
     svg_width = 62 + int(max_char_len * 6.5) + 15
     
-    # 위아래 여백을 제거하여 높이를 55px로 맞추고 이미지 배치
     image_element = f'''
         <rect x="0" y="0" width="55" height="55" fill="#f6f8fa"/>
         <image x="0" y="0" width="55" height="55" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice"/>
@@ -70,7 +69,7 @@ def main():
         <rect x="0" y="0" width="55" height="55" fill="#f6f8fa"/>
     '''
 
-    twemoji_svg = get_twemoji_inline_svg_compact('🐣', 62) or ''
+    twemoji_svg = get_twemoji_inline_svg_compact('🐣', 62, 3) or ''
 
     svg_template = f"""
     <svg width="{svg_width}" height="55" viewBox="0 0 {svg_width} 55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
