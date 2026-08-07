@@ -28,7 +28,7 @@
         <text x="260" y="100" style="font: 500 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">2026-08-05</text>
 
         
-    <text x="260" y="125" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="대륙검은지빠귀">대륙검은지빠귀</text>
+    <text x="260" y="125" style="font: 700 18px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="대륙검은지빠귀">대륙검은지빠귀</text>
     
         <text x="260" y="145" class="sub-value" title="66-2 방이동, 서울특별시" style="fill: #8b949e;">66-2 방이동, 서울특별시</text>
         
