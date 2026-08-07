@@ -7,11 +7,6 @@ on:
         description: 'eBird Data Download URL'
         required: true
         type: string
-      output_path:
-        description: 'Output file path (e.g., assets/freq-ranking.svg)'
-        required: true
-        default: 'assets/freq-ranking.svg'
-        type: string
 
 jobs:
   build:
@@ -35,10 +30,10 @@ jobs:
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
         run: |
-          python src/ebird_readme_card/freq-bird-ranking.py --zip-url "${{ github.event.inputs.zip_url }}" --output "${{ github.event.inputs.output_path }}"
+          python src/ebird_readme_card/freq-bird-ranking.py --zip-url "${{ github.event.inputs.zip_url }}" --output "assets/freq-ranking.svg"
 
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "update ranking card: ${{ github.event.inputs.output_path }}"
-          file_pattern: "${{ github.event.inputs.output_path }}"
+          commit_message: "update freq-ranking card"
+          file_pattern: "assets/freq-ranking.svg"
