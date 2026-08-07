@@ -102,11 +102,11 @@ def main():
     right_details_svg = ""
     if location_mode != "none" and last_location:
         right_details_svg += f"""
-        <text x="260" y="158" class="sub-value" title="{raw_location}" style="fill: #8b949e;">{last_location}</text>
+        <text x="260" y="145" class="sub-value" title="{raw_location}" style="fill: #8b949e;">{last_location}</text>
         """
     
     right_details_svg += f"""
-    <text x="260" y="130" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
+    <text x="260" y="125" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
     """
 
     svg_template = f"""
