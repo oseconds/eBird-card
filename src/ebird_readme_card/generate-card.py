@@ -128,7 +128,7 @@ def main():
         return f"""
         <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 450 200">
             <metadata>
-                Generated with eBird-card (https://github.com/{github_repo})
+                Generated with eBird-card by 0seconds(https://github.com/oseconds/ebird-card)
             </metadata>
 
             <a xlink:href="https://github.com/{github_repo}" target="_blank">
@@ -159,7 +159,7 @@ def main():
 
                 {right_details_svg}
 
-                <text x="400" y="180" class="footer">Last updated: {today_date}</text>
+                <text x="425" y="180" class="footer">Last updated: {today_date}</text>
                 
                 <rect width="100%" height="100%" fill="transparent" cursor="pointer"/>
             </a>
