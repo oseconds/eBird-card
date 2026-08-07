@@ -101,13 +101,10 @@ When running the workflow manually, you can configure:
 
 This project utilizes the following open-source assets:
 
-* **Emojis**: [Twemoji](https://github.com/jdecked/twemoji)
-* **License**: [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) (Copyright Twitter, Inc. and other contributors)
-
-
-* **Fonts**: [Noto Sans CJK](https://github.com/googlefonts/noto-cjk)
-* **License**: [SIL Open Font License, Version 1.1](https://scripts.sil.org/OFL) (Copyright © Google Inc. and Adobe Systems Incorporated)
-
+- **Emojis**: [Twemoji](https://github.com/jdecked/twemoji)
+  - **License**: [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) (Copyright Twitter, Inc. and other contributors)
+- **Fonts**: [Noto Sans CJK](https://github.com/googlefonts/noto-cjk)
+  - **License**: [SIL Open Font License, Version 1.1](https://scripts.sil.org/OFL) (Copyright © Google Inc. and Adobe Systems Incorporated)
 
 
 
