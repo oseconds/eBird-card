@@ -6,7 +6,6 @@ import zipfile
 import argparse
 import requests
 import pandas as pd
-from datetime import datetime
 
 def get_inaturalist_image(scientific_name):
     """
@@ -57,13 +56,13 @@ def get_twemoji_inline_svg_compact(emoji_str):
             inner_match = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, re.DOTALL)
             if inner_match:
                 inner_content = inner_match.group(1)
-                return f'<g transform="translate(25, 14) scale(0.45)">{inner_content}</g>'
+                return f'<g transform="translate(16, 10) scale(0.38)">{inner_content}</g>'
     except Exception as e:
         print(f"⚠️ Twemoji 변환 실패: {e}")
     return None
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate Light Compact New Lifer Card")
+    parser = argparse.ArgumentParser(description="Generate Tiny Compact New Lifer Card")
     parser.add_argument("--zip-url", type=str, help="eBird Data Download URL", required=True)
     parser.add_argument("--output", type=str, help="Output SVG path", default="./assets/new-lifer-compact.svg")
     args = parser.parse_args()
@@ -93,8 +92,7 @@ def main():
             seen.add(species)
             lifers.append({
                 'Common Name': species, 
-                'Scientific Name': sci_name, 
-                'Date': row['Date']
+                'Scientific Name': sci_name
             })
     
     if not lifers:
@@ -104,7 +102,6 @@ def main():
     latest_lifer = lifers[-1]
     bird_name = latest_lifer['Common Name']
     sci_name = latest_lifer['Scientific Name']
-    bird_date = latest_lifer['Date'].strftime("%Y-%m-%d")
 
     print(f"🐣 Latest Lifer: {bird_name} ({sci_name})")
     
@@ -122,44 +119,42 @@ def main():
         text_part = emoji_pattern.sub('', card_title).strip()
         twemoji_group = get_twemoji_inline_svg_compact(emoji_str)
         if twemoji_group:
-            title_svg = f'{twemoji_group}<text x="50" y="30" class="title">{text_part}</text>'
+            title_svg = f'{twemoji_group}<text x="38" y="22" class="title">{text_part}</text>'
         else:
-            title_svg = f'<text x="25" y="30" class="title">{card_title}</text>'
+            title_svg = f'<text x="16" y="22" class="title">{card_title}</text>'
     else:
-        title_svg = f'<text x="25" y="30" class="title">{card_title}</text>'
+        title_svg = f'<text x="16" y="22" class="title">{card_title}</text>'
 
-    # 라이트 모드 둥근 모서리 사각형 이미지 영역
+    # 초미니 사이즈 둥근 모서리 사각형 이미지 영역 (60x60)
     if bird_image_data:
         image_element = f'''
-        <clipPath id="rect-clip-compact">
-            <rect x="344" y="29" width="72" height="72" rx="10" ry="10" />
+        <clipPath id="rect-clip-tiny">
+            <rect x="274" y="17" width="60" height="60" rx="8" ry="8" />
         </clipPath>
-        <rect x="344" y="29" width="72" height="72" rx="10" ry="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
-        <image x="344" y="29" width="72" height="72" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rect-clip-compact)"/>
+        <rect x="274" y="17" width="60" height="60" rx="8" ry="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
+        <image x="274" y="17" width="60" height="60" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rect-clip-tiny)"/>
         '''
     else:
         image_element = '''
-        <rect x="344" y="29" width="72" height="72" rx="10" ry="10" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
-        <text x="380" y="65" style="font: 400 10px 'Segoe UI', Ubuntu, Sans-Serif; fill: #57606a; text-anchor: middle;" dominant-baseline="central">No Photo</text>
+        <rect x="274" y="17" width="60" height="60" rx="8" ry="8" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
+        <text x="304" y="47" style="font: 400 9px 'Segoe UI', Ubuntu, Sans-Serif; fill: #57606a; text-anchor: middle;" dominant-baseline="central">No Photo</text>
         '''
 
     svg_template = f"""
-    <svg width="450" height="130" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 450 130">
+    <svg width="350" height="94" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 350 94">
         <a xlink:href="https://github.com/{github_repo}" target="_blank">
             <style>
-                .bg {{ fill: #ffffff; stroke: #d0d7de; stroke-width: 1px; rx: 10px; }}
-                .title {{ font: 600 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #24292e; cursor: pointer; }}
-                .bird-name {{ font: 700 18px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #1f2328; }}
-                .sci-name {{ font: italic 400 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #57606a; }}
-                .date-label {{ font: 400 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #0969da; }}
+                .bg {{ fill: #ffffff; stroke: #d0d7de; stroke-width: 1px; rx: 8px; }}
+                .title {{ font: 600 13px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #24292e; cursor: pointer; }}
+                .bird-name {{ font: 700 15px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #1f2328; }}
+                .sci-name {{ font: italic 400 11px 'Segoe UI', Ubuntu, Sans-Serif; fill: #57606a; }}
             </style>
             
             <rect width="100%" height="100%" class="bg"/>
             {title_svg}
             
-            <text x="25" y="60" class="bird-name">{bird_name}</text>
-            <text x="25" y="80" class="sci-name">{sci_name}</text>
-            <text x="25" y="105" class="date-label">📅 Observed on: {bird_date}</text>
+            <text x="16" y="48" class="bird-name">{bird_name}</text>
+            <text x="16" y="67" class="sci-name">{sci_name}</text>
             
             {image_element}
             
@@ -173,7 +168,7 @@ def main():
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(svg_template.strip())
         
-    print(f"✅ Successfully generated Light Compact New Lifer Card at {output_path}!")
+    print(f"✅ Successfully generated Tiny Compact New Lifer Card at {output_path}!")
 
 if __name__ == "__main__":
     main()
