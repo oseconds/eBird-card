@@ -68,7 +68,7 @@ def main():
         """
     
     right_details_svg += f"""
-    <text x="315" y="150" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
+    <text x="260" y="150" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
     """
 
     svg_template = f"""
