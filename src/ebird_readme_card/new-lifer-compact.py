@@ -25,7 +25,7 @@ def get_inaturalist_image(scientific_name):
         return None
     except: return None
 
-def get_twemoji_inline_svg_compact(emoji_str):
+def get_twemoji_inline_svg_compact(emoji_str, x_offset):
     try:
         codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
         hex_code = "-".join(codepoints)
@@ -36,7 +36,7 @@ def get_twemoji_inline_svg_compact(emoji_str):
             inner_match = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, re.DOTALL)
             if inner_match:
                 inner_content = inner_match.group(1)
-                return f'<g transform="translate(8, 9) scale(0.3)">{inner_content}</g>'
+                return f'<g transform="translate({x_offset}, 9) scale(0.3)">{inner_content}</g>'
     except: return None
     return None
 
@@ -59,16 +59,23 @@ def main():
     bird_name, sci_name = latest['Common Name'], latest.get('Scientific Name', '')
     bird_image_data = get_inaturalist_image(sci_name)
 
+    # 텍스트 길이에 따른 SVG 가로폭 동적 계산 (최소 240px 보장)
+    max_text_len = max(len(str(bird_name)), len(str(sci_name)), len("Newest Lifer"))
+    svg_width = max(240, 77 + int(max_text_len * 7.5) + 15)
+
+    # 사진 위치: 왼쪽 고정 (x=12)
     image_element = f'''
-        <clipPath id="rect-clip"><rect x="195" y="12" width="55" height="55" rx="6" ry="6" /></clipPath>
-        <rect x="195" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
-        <image x="195" y="12" width="55" height="55" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rect-clip)"/>
+        <clipPath id="rect-clip"><rect x="12" y="12" width="55" height="55" rx="6" ry="6" /></clipPath>
+        <rect x="12" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
+        <image x="12" y="12" width="55" height="55" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rect-clip)"/>
     ''' if bird_image_data else '''
-        <rect x="195" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
+        <rect x="12" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
     '''
 
+    twemoji_svg = get_twemoji_inline_svg_compact('🐣', 77) or ''
+
     svg_template = f"""
-    <svg width="260" height="80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg width="{svg_width}" height="80" viewBox="0 0 {svg_width} 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <a xlink:href="https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}" target="_blank">
             <style>
                 .bg {{ fill: #ffffff; stroke: #d0d7de; stroke-width: 1px; rx: 8px; }}
@@ -77,9 +84,10 @@ def main():
                 .sci-name {{ font: italic 400 9px sans-serif; fill: #57606a; }}
             </style>
             <rect width="100%" height="100%" class="bg"/>
-            {get_twemoji_inline_svg_compact('🐣')}<text x="28" y="22" class="title">Newest Lifer</text>
-            <text x="10" y="45" class="bird-name">{bird_name}</text>
-            <text x="10" y="60" class="sci-name">{sci_name}</text>
+            {twemoji_svg}
+            <text x="95" y="22" class="title">Newest Lifer</text>
+            <text x="77" y="45" class="bird-name">{bird_name}</text>
+            <text x="77" y="60" class="sci-name">{sci_name}</text>
             {image_element}
         </a>
     </svg>
