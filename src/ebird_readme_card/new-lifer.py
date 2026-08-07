@@ -148,7 +148,7 @@ def main():
     if bird_image_data:
         image_element = f'''
         <clipPath id="circle-clip">
-            <circle cx="360" cy="115" r="53" />
+            <circle cx="360" cy="130" r="53" />
         </clipPath>
         <circle cx="360" cy="115" r="55" fill="#21262d" stroke="#30363d" stroke-width="1px"/>
         <image x="307" y="62" width="106" height="106" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#circle-clip)"/>
