@@ -100,14 +100,16 @@ def main():
         title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
 
     right_details_svg = ""
+    # 💡 last_bird
+    right_details_svg += f"""
+    <text x="260" y="122" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
+    """
+    
+    # 💡 last_location
     if location_mode != "none" and last_location:
         right_details_svg += f"""
         <text x="260" y="145" class="sub-value" title="{raw_location}" style="fill: #8b949e;">{last_location}</text>
         """
-    
-    right_details_svg += f"""
-    <text x="260" y="125" class="sub-value" style="fill: #58a6ff;">{last_bird}</text>
-    """
 
     svg_template = f"""
     <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 450 200">
@@ -134,7 +136,7 @@ def main():
         <text x="180" y="145" class="stat-value">{total_observations}</text>
 
         <text x="260" y="85" class="stat-label">Last Birding:</text>
-        <text x="260" y="105" class="stat-value" style="fill: #3fb950;">{last_date}</text>
+        <text x="260" y="103" style="font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
 
         {right_details_svg}
 
