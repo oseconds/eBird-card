@@ -8,8 +8,8 @@ import pandas as pd
 from datetime import datetime
 
 def get_twemoji_base64(emoji_str):
+    """이모지 문자열을 Twemoji 공식 SVG에서 PNG(Base64)로 변환해 가져옵니다."""
     try:
-        # 이모지를 헥사코드(Hex)로 변환 (Variation Selector 0xFE0F 제거)
         codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
         hex_code = "-".join(codepoints)
         
@@ -17,10 +17,12 @@ def get_twemoji_base64(emoji_str):
         res = requests.get(url, timeout=5)
         
         if res.status_code == 200:
-            b64_data = base64.b64encode(res.content).decode('utf-8')
-            return f"data:image/svg+xml;base64,{b64_data}"
+            # SVG를 PNG 바이트로 변환 (모바일 호환성 확보)
+            png_bytes = cairosvg.svg2png(bytestring=res.content, scale=2.0)
+            b64_data = base64.b64encode(png_bytes).decode('utf-8')
+            return f"data:image/png;base64,{b64_data}"
     except Exception as e:
-        print(f"⚠️ Twemoji 불러오기 실패 ({emoji_str}): {e}")
+        print(f"⚠️ Twemoji PNG 변환 실패 ({emoji_str}): {e}")
     return None
 
 def main():
