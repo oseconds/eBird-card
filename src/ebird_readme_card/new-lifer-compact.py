@@ -36,7 +36,7 @@ def get_twemoji_inline_svg_compact(emoji_str, x_offset):
             inner_match = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, re.DOTALL)
             if inner_match:
                 inner_content = inner_match.group(1)
-                return f'<g transform="translate({x_offset}, 16) scale(0.26)">{inner_content}</g>'
+                return f'<g transform="translate({x_offset}, 4) scale(0.26)">{inner_content}</g>'
     except: return None
     return None
 
@@ -59,37 +59,41 @@ def main():
     bird_name, sci_name = latest['Common Name'], latest.get('Scientific Name', '')
     bird_image_data = get_inaturalist_image(sci_name)
 
-    # 왼쪽 여백을 없앤 것에 맞춰 너비 계산 기준점 조정 (62px 기준)
     max_char_len = max(len("Newest Lifer"), len(bird_name), len(sci_name))
     svg_width = 62 + int(max_char_len * 6.5) + 15
     
-    # 사진을 왼쪽 끝(x=0)에 배치하여 여백 제거
+    # 위아래 여백을 제거하여 높이를 55px로 맞추고 이미지 배치
     image_element = f'''
-        <clipPath id="rect-clip"><rect x="0" y="12" width="55" height="55" rx="6" ry="6" /></clipPath>
-        <rect x="0" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
-        <image x="0" y="12" width="55" height="55" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rect-clip)"/>
+        <rect x="0" y="0" width="55" height="55" fill="#f6f8fa"/>
+        <image x="0" y="0" width="55" height="55" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice"/>
     ''' if bird_image_data else '''
-        <rect x="0" y="12" width="55" height="55" rx="6" ry="6" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1px"/>
+        <rect x="0" y="0" width="55" height="55" fill="#f6f8fa"/>
     '''
 
-    # 이모지 및 텍스트 시작점을 왼쪽으로 10px씩 당김 (시작점 x=62)
     twemoji_svg = get_twemoji_inline_svg_compact('🐣', 62) or ''
 
     svg_template = f"""
-    <svg width="{svg_width}" height="80" viewBox="0 0 {svg_width} 80" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <svg width="{svg_width}" height="55" viewBox="0 0 {svg_width} 55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <clipPath id="card-clip">
+                <rect width="{svg_width}" height="55" rx="8" ry="8"/>
+            </clipPath>
+        </defs>
         <a xlink:href="https://github.com/{os.environ.get('GITHUB_REPOSITORY', '')}" target="_blank">
-            <style>
-                .bg {{ fill: #ffffff; stroke: #d0d7de; stroke-width: 1px; rx: 8px; }}
-                .title {{ font: 600 11px sans-serif; fill: #24292e; }}
-                .bird-name {{ font: 700 13px sans-serif; fill: #1f2328; }}
-                .sci-name {{ font: italic 400 9px sans-serif; fill: #57606a; }}
-            </style>
-            <rect width="100%" height="100%" class="bg"/>
-            {twemoji_svg}
-            <text x="75" y="24" class="title">Newest Lifer</text>
-            <text x="62" y="44" class="bird-name">{bird_name}</text>
-            <text x="62" y="62" class="sci-name">{sci_name}</text>
-            {image_element}
+            <g clip-path="url(#card-clip)">
+                <style>
+                    .bg {{ fill: #ffffff; stroke: #d0d7de; stroke-width: 1px; rx: 8px; }}
+                    .title {{ font: 600 11px sans-serif; fill: #24292e; }}
+                    .bird-name {{ font: 700 13px sans-serif; fill: #1f2328; }}
+                    .sci-name {{ font: italic 400 9px sans-serif; fill: #57606a; }}
+                </style>
+                <rect width="100%" height="100%" class="bg"/>
+                {image_element}
+                {twemoji_svg}
+                <text x="75" y="14" class="title">Newest Lifer</text>
+                <text x="62" y="34" class="bird-name">{bird_name}</text>
+                <text x="62" y="49" class="sci-name">{sci_name}</text>
+            </g>
         </a>
     </svg>
     """
