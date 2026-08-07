@@ -8,7 +8,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 ## 🚀 Demo & Preview
 
-<p align="center">
+
   <!-- 1. Main Stats Card -->
   <strong>📊 Main Stats Card</strong><br>
   <sub>Displays total species, checklists, observations, and your latest birding session.</sub><br><br>
@@ -28,7 +28,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
   <strong>🐣 Newest Lifer Card (Compact)</strong><br>
   <sub>A space-saving, single-line version of the lifer card.</sub><br><br>
   <img src="./assets/new-lifer-compact.svg" alt="New Lifer Compact Card">
-</p>
+
 
 <p align="center">
   <em>A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.</em>
