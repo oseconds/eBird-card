@@ -92,7 +92,6 @@ def main():
         twemoji_b64 = get_twemoji_base64(emoji_str)
         
         if twemoji_b64:
-            # 💡 CairoSVG(PNG 변환) 호환을 위해 xlink:href와 href를 동시에 지정
             title_svg_element = f'''
             <image x="30" y="21" width="22" height="22" href="{twemoji_b64}" xlink:href="{twemoji_b64}"/>
             <text x="58" y="40" class="title">{text_part}</text>
@@ -101,7 +100,7 @@ def main():
             title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
     else:
         title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
-
+        
     right_details_svg = ""
     # 💡 last_bird
     right_details_svg += f"""
