@@ -145,18 +145,19 @@ def main():
     else:
         title_svg = f'<text x="30" y="40" class="title">{card_title}</text>'
 
+    # 사진 원형 영역을 위쪽으로 조정 (cy=100)
     if bird_image_data:
         image_element = f'''
         <clipPath id="circle-clip">
-            <circle cx="360" cy="80" r="53" />
+            <circle cx="360" cy="100" r="53" />
         </clipPath>
-        <circle cx="360" cy="115" r="55" fill="#21262d" stroke="#30363d" stroke-width="1px"/>
-        <image x="307" y="62" width="106" height="106" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#circle-clip)"/>
+        <circle cx="360" cy="100" r="55" fill="#21262d" stroke="#30363d" stroke-width="1px"/>
+        <image x="305" y="45" width="110" height="110" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#circle-clip)"/>
         '''
     else:
         image_element = '''
-        <circle cx="360" cy="115" r="55" fill="#21262d" stroke="#30363d" stroke-width="1px"/>
-        <text x="360" y="120" style="font: 400 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; text-anchor: middle;">No Photo</text>
+        <circle cx="360" cy="100" r="55" fill="#21262d" stroke="#30363d" stroke-width="1px"/>
+        <text x="360" y="105" style="font: 400 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; text-anchor: middle;" dominant-baseline="central">No Photo</text>
         '''
 
     svg_template = f"""
