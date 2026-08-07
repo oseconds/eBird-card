@@ -34,6 +34,7 @@ jobs:
           python src/ebird_readme_card/freq-bird-ranking.py --zip-url "${{ github.event.inputs.zip_url }}" --output "assets/freq-ranking.svg"
 
       - name: Commit and push changes
+        if: ${{ env.LOCAL_ACT != 'true' }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "update freq-ranking card"

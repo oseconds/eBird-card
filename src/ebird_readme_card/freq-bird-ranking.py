@@ -79,7 +79,10 @@ def main():
 
     svg_template = f"""
     <svg width="450" height="260" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 450 260">
-        <a xlink:href="https://github.com/{github_repo}" target="_blank">
+        <a xlink:href="https://github.com/oseconds/eBird-card" target="_blank">
+        <metadata>
+            Generated with eBird-card (https://github.com/oseconds/eBird-card)
+        </metadata>
             <style>
                 .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
                 .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; cursor: pointer; }}
@@ -93,7 +96,7 @@ def main():
             <line x1="30" y1="55" x2="420" y2="55" class="divider"/>
             {ranking_svg_elements}
             
-            <text x="420" y="240" class="footer">Observation frequency ranking • {today_date}</text>
+            <text x="420" y="240" class="footer">Last Update • {today_date}</text>
             <rect width="100%" height="100%" fill="transparent" cursor="pointer"/>
         </a>
     </svg>
