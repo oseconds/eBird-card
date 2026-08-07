@@ -2,7 +2,6 @@ import os
 import io
 import re
 import zipfile
-import base64
 import requests
 import pandas as pd
 from datetime import datetime
@@ -18,12 +17,10 @@ def get_twemoji_inline_svg(emoji_str):
         
         if res.status_code == 200:
             svg_text = res.text
-            # SVG 태그 내부의 내용물 추출
             inner_match = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, re.DOTALL)
             if inner_match:
                 inner_content = inner_match.group(1)
-                # Twemoji 기본 크기(36x36)를 카드 타이틀에 맞는 크기(22x22)로 스케일링 및 위치 지정
-                # scale = 22 / 36 ≈ 0.6111
+                # 크기(36x36)를 카드 타이틀에 맞는 크기(22x22)로 스케일링 및 위치 지정 (22 / 36 ≈ 0.6111)
                 return f'<g transform="translate(30, 21) scale(0.6111)">{inner_content}</g>'
     except Exception as e:
         print(f"⚠️ Twemoji 인라인 변환 실패 ({emoji_str}): {e}")
@@ -86,7 +83,6 @@ def main():
 
     print("🎨 Processing title Twemoji & Generating profile card...")
     
-    # 💡 이모지 감지
     emoji_pattern = re.compile(r'[\U0001F000-\U0001FAFF\U00002600-\U000027BF]+')
     emoji_match = emoji_pattern.search(card_title)
     
@@ -105,12 +101,6 @@ def main():
     else:
         title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
 
-    # PNG 변환용 타이틀 엘리먼트 (안정적인 로컬 임시 파일 경로 사용)
-    if temp_file:
-        png_title_element = f'<image x="30" y="21" width="22" height="22" href="{temp_file}" xlink:href="{temp_file}"/><text x="58" y="40" class="title">{text_part}</text>'
-    else:
-        png_title_element = f'<text x="30" y="40" class="title">{card_title}</text>'
-
     right_details_svg = ""
     right_details_svg += f"""
     <text x="260" y="122" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
@@ -121,50 +111,49 @@ def main():
         <text x="260" y="145" class="sub-value" title="{raw_location}" style="fill: #8b949e;">{last_location}</text>
         """
 
-    # 공통 SVG 구조 템플릿 함수
-    def build_svg_string(title_element):
-        return f"""
-        <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 450 200">
-            <metadata>
-                Generated with eBird-card by 0seconds(https://github.com/oseconds/ebird-card)
-            </metadata>
+    svg_template = f"""
+    <svg width="450" height="200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 450 200">
+        <metadata>
+            Generated with eBird-card (https://github.com/{github_repo})
+        </metadata>
 
-            <a xlink:href="https://github.com/{github_repo}" target="_blank">
-                <style>
-                    .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
-                    .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; cursor: pointer; }}
-                    .stat-label {{ font: 400 14px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-                    .stat-value {{ font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-                    .sub-label {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
-                    .sub-value {{ font: 600 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
-                    .footer {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; text-anchor: end; }}
-                </style>
-                
-                <rect width="100%" height="100%" class="bg"/>
-                {title_element}
-                
-                <text x="30" y="85" class="stat-label">Total Species:</text>
-                <text x="180" y="85" class="stat-value">{total_species}</text>
-                
-                <text x="30" y="115" class="stat-label">Total Checklists:</text>
-                <text x="180" y="115" class="stat-value">{total_checklists}</text>
-                
-                <text x="30" y="145" class="stat-label">Total Observations:</text>
-                <text x="180" y="145" class="stat-value">{total_observations}</text>
+        <a xlink:href="https://github.com/{github_repo}" target="_blank">
+            <style>
+                .bg {{ fill: #0d1117; stroke: #30363d; stroke-width: 1px; rx: 10px; }}
+                .title {{ font: 600 20px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; cursor: pointer; }}
+                .stat-label {{ font: 400 14px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+                .stat-value {{ font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+                .sub-label {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #8b949e; }}
+                .sub-value {{ font: 600 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9; }}
+                .footer {{ font: 400 11px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #484f58; text-anchor: end; }}
+            </style>
+            
+            <rect width="100%" height="100%" class="bg"/>
+            {title_svg_element}
+            
+            <text x="30" y="85" class="stat-label">Total Species:</text>
+            <text x="180" y="85" class="stat-value">{total_species}</text>
+            
+            <text x="30" y="115" class="stat-label">Total Checklists:</text>
+            <text x="180" y="115" class="stat-value">{total_checklists}</text>
+            
+            <text x="30" y="145" class="stat-label">Total Observations:</text>
+            <text x="180" y="145" class="stat-value">{total_observations}</text>
 
-                <text x="260" y="85" class="stat-label">Last Birding:</text>
-                <text x="260" y="103" style="font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
+            <text x="260" y="85" class="stat-label">Last Birding:</text>
+            <text x="260" y="103" style="font: 600 13px 'Segoe UI', Ubuntu, Sans-Serif; fill: #3fb950;">{last_date}</text>
 
-                {right_details_svg}
+            {right_details_svg}
 
-                <text x="425" y="180" class="footer">Last updated: {today_date}</text>
-                
-                <rect width="100%" height="100%" fill="transparent" cursor="pointer"/>
-            </a>
-        </svg>
-        """.strip()
+            <text x="420" y="180" class="footer">Last updated: {today_date}</text>
+            
+            <rect width="100%" height="100%" fill="transparent" cursor="pointer"/>
+        </a>
+    </svg>
+    """
 
-    # 파일 저장 경로 설정
+    svg_content = svg_template.strip()
+    
     base, ext = os.path.splitext(output_path_env)
     svg_path = output_path_env if ext.lower() == '.svg' else f"{output_path_env}.svg"
     png_path = f"{base}.png" if ext.lower() == '.svg' else f"{output_path_env}.png"
@@ -172,31 +161,21 @@ def main():
     clean_svg_path = svg_path.lstrip("./")
     clean_png_path = png_path.lstrip("./")
 
-    # 1. SVG 파일 생성 (Base64 사용)
     if output_format in ["svg", "both"]:
         os.makedirs(os.path.dirname(svg_path) if os.path.dirname(svg_path) else ".", exist_ok=True)
         with open(svg_path, "w", encoding="utf-8") as f:
-            f.write(build_svg_string(svg_title_element))
+            f.write(svg_content)
         print(f"✅ Successfully generated {svg_path}!")
 
-    # 2. PNG 파일 생성 (로컬 임시 파일 사용 후 정리)
     if output_format in ["png", "both"]:
         os.makedirs(os.path.dirname(png_path) if os.path.dirname(png_path) else ".", exist_ok=True)
         try:
             import cairosvg
-            cairosvg.svg2png(bytestring=build_svg_string(png_title_element).encode('utf-8'), write_to=png_path, scale=2.0, unsafe=True)
+            cairosvg.svg2png(bytestring=svg_content.encode('utf-8'), write_to=png_path, scale=2.0)
             print(f"✅ Successfully generated {png_path} (High Resolution with Twemoji)!")
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
-        finally:
-            # 사용이 끝난 임시 파일 삭제 정리
-            if temp_file and os.path.exists(temp_file):
-                try:
-                    os.remove(temp_file)
-                except:
-                    pass            
 
-    # Write to GitHub Actions Step Summary
     step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary_path:
         try:
