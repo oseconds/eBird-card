@@ -96,7 +96,7 @@ def main():
             <line x1="30" y1="55" x2="420" y2="55" class="divider"/>
             {ranking_svg_elements}
             
-            <text x="420" y="240" class="footer">Last Update • {today_date}</text>
+            <text x="420" y="240" class="footer">Updated • {today_date}</text>
             <rect width="100%" height="100%" fill="transparent" cursor="pointer"/>
         </a>
     </svg>
