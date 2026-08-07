@@ -7,8 +7,8 @@ import requests
 import pandas as pd
 from datetime import datetime
 
-def get_twemoji_assets(emoji_str):
-    """이모지를 다운로드하여 웹용 Base64와 CairoSVG용 임시 파일 경로를 각각 생성합니다."""
+def get_twemoji_inline_svg(emoji_str):
+    """Twemoji SVG의 벡터 경로를 가져와 카드에 직접 삽입할 수 있는 <g> 태그로 변환합니다."""
     try:
         codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
         hex_code = "-".join(codepoints)
@@ -17,23 +17,17 @@ def get_twemoji_assets(emoji_str):
         res = requests.get(url, timeout=5)
         
         if res.status_code == 200:
-            import cairosvg
-            # PNG 바이너리로 변환
-            png_bytes = cairosvg.svg2png(bytestring=res.content, scale=2.0)
-            
-            # 1. 웹/GitHub SVG용 Base64 Data URI
-            b64_data = base64.b64encode(png_bytes).decode('utf-8')
-            web_href = f"data:image/png;base64,{b64_data}"
-            
-            # 2. CairoSVG 변환용 로컬 임시 파일 저장
-            temp_filename = "temp_emoji.png"
-            with open(temp_filename, "wb") as f:
-                f.write(png_bytes)
-                
-            return web_href, temp_filename
+            svg_text = res.text
+            # SVG 태그 내부의 내용물 추출
+            inner_match = re.search(r'<svg[^>]*>(.*)</svg>', svg_text, re.DOTALL)
+            if inner_match:
+                inner_content = inner_match.group(1)
+                # Twemoji 기본 크기(36x36)를 카드 타이틀에 맞는 크기(22x22)로 스케일링 및 위치 지정
+                # scale = 22 / 36 ≈ 0.6111
+                return f'<g transform="translate(30, 21) scale(0.6111)">{inner_content}</g>'
     except Exception as e:
-        print(f"⚠️ Twemoji 처리 실패 ({emoji_str}): {e}")
-    return None, None
+        print(f"⚠️ Twemoji 인라인 변환 실패 ({emoji_str}): {e}")
+    return None
 
 def main():
     zip_url = os.environ.get("ZIP_URL")
@@ -95,17 +89,21 @@ def main():
     # 💡 이모지 감지
     emoji_pattern = re.compile(r'[\U0001F000-\U0001FAFF\U00002600-\U000027BF]+')
     emoji_match = emoji_pattern.search(card_title)
-    text_part = emoji_pattern.sub('', card_title).strip()
     
-    web_href, temp_file = None, None
     if emoji_match:
-        web_href, temp_file = get_twemoji_assets(emoji_match.group())
-
-    # SVG 파일용 타이틀 엘리먼트 (Base64 Data URI 사용)
-    if web_href:
-        svg_title_element = f'<image x="30" y="21" width="22" height="22" href="{web_href}" xlink:href="{web_href}"/><text x="58" y="40" class="title">{text_part}</text>'
+        emoji_str = emoji_match.group()
+        text_part = emoji_pattern.sub('', card_title).strip()
+        twemoji_group = get_twemoji_inline_svg(emoji_str)
+        
+        if twemoji_group:
+            title_svg_element = f'''
+            {twemoji_group}
+            <text x="58" y="40" class="title">{text_part}</text>
+            '''
+        else:
+            title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
     else:
-        svg_title_element = f'<text x="30" y="40" class="title">{card_title}</text>'
+        title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
 
     # PNG 변환용 타이틀 엘리먼트 (안정적인 로컬 임시 파일 경로 사용)
     if temp_file:
