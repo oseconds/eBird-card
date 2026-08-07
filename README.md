@@ -36,7 +36,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
       <h3>🐣 Newest Lifer Card (Compact)</h3>
       <sub>A space-saving, single-line version of the lifer card.</sub>
       <br><br>
-      <img src="./assets/new-lifer-compact.svg" alt="New Lifer Compact Card" width="100%">
+      <img src="./assets/new-lifer-compact.svg" alt="New Lifer Compact Card" width="50%">
     </td>
   </tr>
 </table>
