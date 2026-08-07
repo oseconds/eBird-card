@@ -140,7 +140,7 @@ def main():
 
         {right_details_svg}
 
-        <text x="420" y="180" class="footer">Last updated: {today_date}</text>
+        <text x="300" y="180" class="footer">Last updated: {today_date}</text>
         <metadata>
             Generated with eBird-card by 0seconds (https://github.com/oseconds/eBird-Card)
         </metadata>
