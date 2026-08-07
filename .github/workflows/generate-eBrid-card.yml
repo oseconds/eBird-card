@@ -33,7 +33,7 @@ on:
           - both
 
 jobs:
-  build:
+  generate-card:
     name: Generate eBird Card
     runs-on: ubuntu-latest
 
