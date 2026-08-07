@@ -59,6 +59,20 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 ---
 
+## 🛠️ How to Use
+
+1. **Fork this repository** to your GitHub account.
+2. **Request your eBird data** (See the [detailed guide below](#-how-to-download-your-ebird-data) if you don't have your ZIP download link yet).
+3. **Run the GitHub Action**:
+   - Go to your repository's **Actions** tab.
+   - Select **Update eBird Card** from the left sidebar.
+   - Click **Run workflow**, paste your eBird ZIP download URL, select your location display mode, and click **Run workflow**.
+4. **Copy & Paste your Card**:
+   - Once the action completes, check the **Summary** page.
+   - Copy the generated markdown code and paste it into your profile `README.md` or Notion!
+
+---
+
 ## 📥 How to Download Your eBird Data
 
 1. **Visit eBird Data Download**: Go to [eBird Data Download ↗](https://ebird.org/downloadMyData) and log in to your account.
@@ -72,20 +86,6 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 ---
 
-## 🛠️ How to Use
-
-1. **Fork this repository** to your GitHub account.
-2. **Request your eBird data** from the eBird website and get your download ZIP link.
-3. **Run the GitHub Action**:
-   - Go to your repository's **Actions** tab.
-   - Select **Update eBird Card** from the left sidebar.
-   - Click **Run workflow**, paste your eBird ZIP download URL, select your location display mode, and click **Run workflow**.
-4. **Copy & Paste your Card**:
-   - Once the action completes, click on the workflow run and check the **Summary** page.
-   - You will find the complete markdown code ready with a copy button, automatically tailored with your username!
-   - Click the copy button and paste it into your profile `README.md` or Notion.
-
----
 
 ### 🚀 Quick Action Badge (Optional)
 
