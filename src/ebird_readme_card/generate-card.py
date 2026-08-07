@@ -1,9 +1,28 @@
 import os
 import io
+import re
 import zipfile
+import base64
 import requests
 import pandas as pd
 from datetime import datetime
+
+def get_twemoji_base64(emoji_str):
+    """이모지 문자열을 Twemoji 공식 SVG 이미지(Base64)로 변환해 가져옵니다."""
+    try:
+        # 이모지를 헥사코드(Hex)로 변환 (Variation Selector 0xFE0F 제거)
+        codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
+        hex_code = "-".join(codepoints)
+        
+        url = f"https://cdn.jsdelivr.net/gh/jdecked/twemoji@latest/assets/svg/{hex_code}.svg"
+        res = requests.get(url, timeout=5)
+        
+        if res.status_code == 200:
+            b64_data = base64.b64encode(res.content).decode('utf-8')
+            return f"data:image/svg+xml;base64,{b64_data}"
+    except Exception as e:
+        print(f"⚠️ Twemoji 불러오기 실패 ({emoji_str}): {e}")
+    return None
 
 def main():
     zip_url = os.environ.get("ZIP_URL")
@@ -60,7 +79,27 @@ def main():
 
     today_date = datetime.now().strftime("%Y-%m-%d")
 
-    print("🎨 Generating profile card...")
+    print("🎨 Processing title Twemoji & Generating profile card...")
+    
+    # 💡 이모지 감지 정규식
+    emoji_pattern = re.compile(r'[\U0001F000-\U0001FAFF\U00002600-\U000027BF]+')
+    emoji_match = emoji_pattern.search(card_title)
+    
+    if emoji_match:
+        emoji_str = emoji_match.group()
+        text_part = emoji_pattern.sub('', card_title).strip()
+        twemoji_b64 = get_twemoji_base64(emoji_str)
+        
+        if twemoji_b64:
+            title_svg_element = f'''
+            <image x="30" y="21" width="22" height="22" href="{twemoji_b64}"/>
+            <text x="58" y="40" class="title">{text_part}</text>
+            '''
+        else:
+            title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
+    else:
+        title_svg_element = f'<text x="30" y="40" class="title">{card_title}</text>'
+
     right_details_svg = ""
     if location_mode != "none" and last_location:
         right_details_svg += f"""
@@ -84,7 +123,7 @@ def main():
         </style>
         
         <rect width="100%" height="100%" class="bg"/>
-        <text x="30" y="40" class="title">{card_title}</text>
+        {title_svg_element}
         
         <text x="30" y="85" class="stat-label">Total Species:</text>
         <text x="180" y="85" class="stat-value">{total_species}</text>
@@ -124,11 +163,11 @@ def main():
         try:
             import cairosvg
             cairosvg.svg2png(bytestring=svg_content.encode('utf-8'), write_to=png_path, scale=2.0)
-            print(f"✅ Successfully generated {png_path} (High Resolution)!")
+            print(f"✅ Successfully generated {png_path} (High Resolution with Twemoji)!")
         except Exception as e:
             print(f"⚠️ Failed to generate PNG: {e}")
 
-    # Write to GitHub Actions Step Summary (미리보기 이미지 렌더링 + 복사 버튼 포함)
+    # Write to GitHub Actions Step Summary
     step_summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if step_summary_path:
         try:
