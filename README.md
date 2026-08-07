@@ -113,11 +113,13 @@ When running the workflow manually, you can configure:
 
 ## 📝 Acknowledgments & Licenses
 
-This project utilizes the following open-source assets:
+This project utilizes the following open-source assets and APIs:
 
-- **Emojis**: [Twemoji](https://github.com/jdecked/twemoji)
+- **Bird Images**: [iNaturalist API](https://api.inaturalist.org/v1/taxa)
+  - **License**: Creative Commons (default: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)) / Copyrighted by individual [iNaturalist](https://www.inaturalist.org) contributors.
+- **Emojis**: [Twemoji](https://github.com/jdecked/twemoji) 
   - **License**: [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) (Copyright Twitter, Inc. and other contributors)
-- **Fonts**: [Noto Sans CJK](https://github.com/googlefonts/noto-cjk)
+- **Fonts**: [Noto Sans CJK](https://github.com/googlefonts/noto-cjk) 
   - **License**: [SIL Open Font License, Version 1.1](https://scripts.sil.org/OFL) (Copyright © Google Inc. and Adobe Systems Incorporated)
 
 
