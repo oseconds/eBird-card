@@ -89,7 +89,7 @@ def main():
                 <rect width="100%" height="100%" class="bg"/>
                 {image_element}
                 {twemoji_svg}
-                <text x="75" y="14" class="title">Newest Lifer</text>
+                <text x="75" y="16" class="title">Newest Lifer</text>
                 <text x="62" y="34" class="bird-name">{bird_name}</text>
                 <text x="62" y="49" class="sci-name">{sci_name}</text>
             </g>
