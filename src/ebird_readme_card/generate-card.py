@@ -8,7 +8,6 @@ import pandas as pd
 from datetime import datetime
 
 def get_twemoji_base64(emoji_str):
-    """이모지 문자열을 Twemoji 공식 SVG 이미지(Base64)로 변환해 가져옵니다."""
     try:
         # 이모지를 헥사코드(Hex)로 변환 (Variation Selector 0xFE0F 제거)
         codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
