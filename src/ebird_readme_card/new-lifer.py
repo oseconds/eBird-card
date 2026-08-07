@@ -1,6 +1,7 @@
 import os
 import io
 import re
+import base64
 import zipfile
 import argparse
 import requests
@@ -9,7 +10,7 @@ from datetime import datetime
 
 def get_inaturalist_data(scientific_name):
     """
-    iNaturalist API로 사진 URL과 IUCN 보전 상태를 가져옵니다.
+    iNaturalist API로 사진 URL과 IUCN 보전 상태를 가져온 뒤, Base64로 변환합니다.
     """
     if not scientific_name or pd.isna(scientific_name):
         return None, "unknown"
@@ -36,10 +37,17 @@ def get_inaturalist_data(scientific_name):
         if data.get("conservation_status"):
             status = data["conservation_status"].get("status", "").lower()
             
-        return photo_url, status
+        base64_image = None
+        if photo_url:
+            img_res = requests.get(photo_url, timeout=5)
+            if img_res.status_code == 200:
+                encoded = base64.b64encode(img_res.content).decode('utf-8')
+                base64_image = f"data:image/jpeg;base64,{encoded}"
+                
+        return base64_image, status
         
     except Exception as e:
-        print(f"⚠️ iNaturalist 검색 오류 ({scientific_name}): {e}")
+        print(f"⚠️ iNaturalist 데이터 처리 오류 ({scientific_name}): {e}")
         return None, "unknown"
 
 def get_status_color(status):
@@ -70,7 +78,7 @@ def get_twemoji_inline_svg(emoji_str):
     return None
 
 def main():
-    parser = argparse.ArgumentParser(description="Generate Newest Lifer Card with iNaturalist Image")
+    parser = argparse.ArgumentParser(description="Generate Newest Lifer Card with Embedded Image")
     parser.add_argument("--zip-url", type=str, help="eBird Data Download URL", required=True)
     parser.add_argument("--output", type=str, help="Output SVG path", default="./assets/new-lifer.svg")
     args = parser.parse_args()
@@ -115,8 +123,8 @@ def main():
 
     print(f"🐣 Latest Lifer: {bird_name} ({sci_name})")
     
-    print(f"🌿 Fetching iNaturalist data for {sci_name}...")
-    bird_image_url, conservation_status = get_inaturalist_data(sci_name)
+    print(f"🌿 Fetching iNaturalist data & embedding image for {sci_name}...")
+    bird_image_data, conservation_status = get_inaturalist_data(sci_name)
     dot_color = get_status_color(conservation_status)
 
     github_repo = os.environ.get("GITHUB_REPOSITORY", "your-username/eBird-card")
@@ -130,17 +138,20 @@ def main():
         emoji_str = emoji_match.group()
         text_part = emoji_pattern.sub('', card_title).strip()
         twemoji_group = get_twemoji_inline_svg(emoji_str)
-        title_svg = f'{twemoji_group}<text x="58" y="40" class="title">{text_part}</text>'
+        if twemoji_group:
+            title_svg = f'{twemoji_group}<text x="58" y="40" class="title">{text_part}</text>'
+        else:
+            title_svg = f'<text x="30" y="40" class="title">{card_title}</text>'
     else:
         title_svg = f'<text x="30" y="40" class="title">{card_title}</text>'
 
-    if bird_image_url:
+    if bird_image_data:
         image_element = f'''
         <clipPath id="circle-clip">
             <circle cx="360" cy="115" r="53" />
         </clipPath>
         <circle cx="360" cy="115" r="55" fill="#21262d" stroke="#30363d" stroke-width="1px"/>
-        <image x="307" y="62" width="106" height="106" href="{bird_image_url}" preserveAspectRatio="xMidYMid slice" clip-path="url(#circle-clip)"/>
+        <image x="307" y="62" width="106" height="106" href="{bird_image_data}" preserveAspectRatio="xMidYMid slice" clip-path="url(#circle-clip)"/>
         '''
     else:
         image_element = '''
@@ -168,9 +179,9 @@ def main():
             <text x="30" y="107" class="sci-name">{sci_name}</text>
             <text x="30" y="138" class="date-label">📅 Observed on: {bird_date}</text>
             
-            <!-- 상태를 나타내는 동그라미 컬러 점과 텍스트 -->
-            <circle cx="38" cy="167" r="5" fill="{dot_color}" />
-            <text x="50" y="171" class="status-label">IUCN: {conservation_status.upper()}</text>
+            <!-- 세로 중앙 정렬된 동그라미 컬러 점과 텍스트 -->
+            <circle cx="38" cy="168" r="4.5" fill="{dot_color}" />
+            <text x="50" y="168" class="status-label" dominant-baseline="central">IUCN: {conservation_status.upper()}</text>
             
             {image_element}
             
