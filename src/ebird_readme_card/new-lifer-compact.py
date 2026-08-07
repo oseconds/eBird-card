@@ -25,7 +25,7 @@ def get_inaturalist_image(scientific_name):
         return None
     except: return None
 
-def get_twemoji_inline_svg_compact(emoji_str, x_offset, y_offset=3):
+def get_twemoji_inline_svg_compact(emoji_str, x_offset, y_offset=5):
     try:
         codepoints = [f"{ord(c):x}" for c in emoji_str if ord(c) != 0xfe0f]
         hex_code = "-".join(codepoints)
@@ -69,7 +69,7 @@ def main():
         <rect x="0" y="0" width="55" height="55" fill="#f6f8fa"/>
     '''
 
-    twemoji_svg = get_twemoji_inline_svg_compact('🐣', 62, 3) or ''
+    twemoji_svg = get_twemoji_inline_svg_compact('🐣', 62, 5) or ''
 
     svg_template = f"""
     <svg width="{svg_width}" height="55" viewBox="0 0 {svg_width} 55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -89,7 +89,7 @@ def main():
                 <rect width="100%" height="100%" class="bg"/>
                 {image_element}
                 {twemoji_svg}
-                <text x="75" y="12" class="title">Newest Lifer</text>
+                <text x="75" y="14" class="title">Newest Lifer</text>
                 <text x="62" y="34" class="bird-name">{bird_name}</text>
                 <text x="62" y="49" class="sci-name">{sci_name}</text>
             </g>
