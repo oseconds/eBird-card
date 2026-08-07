@@ -103,7 +103,7 @@ def main():
 
     right_details_svg = ""
     right_details_svg += f"""
-    <text x="260" y="122" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
+    <text x="260" y="125" style="font: 700 16px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff;" title="{last_bird}">{last_bird}</text>
     """
     
     if location_mode != "none" and last_location:
