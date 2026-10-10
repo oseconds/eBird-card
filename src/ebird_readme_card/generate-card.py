@@ -59,7 +59,16 @@ def main():
 
     try:
         df['Date'] = pd.to_datetime(df['Date'])
-        latest_row = df.loc[df['Date'].idxmax()]
+        lifetime_counts = df.assign(
+            numeric_count=pd.to_numeric(df['Count'], errors='coerce')
+        ).groupby('Common Name')['numeric_count'].sum(min_count=1)
+        latest = df.loc[df['Date'] == df['Date'].max()].copy()
+        latest['lifetime_count'] = latest['Common Name'].map(lifetime_counts)
+        latest = latest.dropna(subset=['lifetime_count'])
+        latest_row = (
+            latest.sort_values('lifetime_count', kind='stable').iloc[0]
+            if not latest.empty else df.loc[df['Date'].idxmax()]
+        )
         last_date = latest_row['Date'].strftime("%Y-%m-%d")
         last_bird = str(latest_row.get('Common Name', 'N/A'))
         
