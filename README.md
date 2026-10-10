@@ -10,38 +10,15 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 <div align="center">
 
-<table>
-  <tr>
-    <td align="center" valign="top" width="50%">
-      <h3>📊 Main Stats Card</h3>
-      <sub>Displays total species, checklists, observations, and your latest session.</sub>
-      <br><br>
-      <img src="./assets/ebird-card.svg" alt="eBird Main Stats Card" width="100%">
-    </td>
-    <td align="center" valign="top" width="50%">
-      <h3>🏆 Frequency Ranking Card</h3>
-      <sub>Shows your most frequently observed and recorded bird species.</sub>
-      <br><br>
-      <img src="./assets/freq-ranking.svg" alt="Frequency Ranking Card" width="100%">
-    </td>
-  </tr>
-  <tr>
-    <td align="center" valign="top" width="50%">
-      <h3>🐣 Newest Lifer Card (Standard)</h3>
-      <sub>Highlights detailed information about your most recently observed lifer.</sub>
-      <br><br>
-      <img src="./assets/new-lifer.svg" alt="New Lifer Card" width="100%">
-    </td>
-    <td align="center" valign="top" width="50%">
-      <h3>🐣 Newest Lifer Card (Compact)</h3>
-      <sub>A space-saving, single-line version of the lifer card.</sub>
-      <br><br>
-      <img src="./examples/new-lifer-compact.svg" alt="New Lifer Compact Card" width="70%">
-    </td>
-  </tr>
-</table>
+<p>
+  <img src="./assets/ebird-card.svg" width="390" alt="Main Stats Card">
+  <img src="./assets/freq-ranking.svg" width="390" alt="Frequency Ranking Card">
+</p>
 
-<br>
+<p>
+  <img src="./assets/new-lifer.svg" width="390" alt="Newest Lifer Card">
+  <img src="./examples/new-lifer-compact.svg" width="270" alt="Newest Lifer Compact Card">
+</p>
 
 *A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.*
 
