@@ -96,7 +96,7 @@ When running the workflow manually, you can configure:
 * **`location_mode`**: Choose how location is displayed (`location`, `state`, `country`, or `none`).
 * **`card_title`**: Custom title for your card (Leave blank for the default `🪶 My Feathered Log`).
 
-The **Generate eBird Freq Bird Ranking Card** workflow only requires `zip_url` and generates both `assets/freq-ranking.svg` (observation frequency) and `assets/abundance-ranking.svg` (sum of numeric `Count` values; uncounted `X` entries are excluded) in one run.
+The **Generate eBird Bird Ranking Cards** workflow only requires `zip_url` and generates both `assets/freq-ranking.svg` (observation frequency) and `assets/abundance-ranking.svg` (sum of numeric `Count` values; uncounted `X` entries are excluded) in one run.
 
 ---
 
