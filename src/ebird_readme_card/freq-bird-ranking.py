@@ -27,6 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate eBird Frequency Ranking Card")
     parser.add_argument("--zip-url", type=str, help="eBird Data Download URL", required=True)
     parser.add_argument("--output", type=str, help="Output SVG path", default="./assets/freq-ranking.svg")
+    parser.add_argument("--mode", choices=["frequency", "abundance"], default="frequency", help="Ranking metric")
     args = parser.parse_args()
 
     print("📥 Downloading eBird data for ranking...")
@@ -41,8 +42,19 @@ def main():
         print(f"❌ Error reading data: {e}")
         exit(1)
 
-    print("📊 Calculating Frequently Seen Birds (Top 5)...")
-    top_birds = df['Common Name'].value_counts().head(5)
+    print(f"📊 Calculating Top 5 Birds by {args.mode}...")
+    if args.mode == "abundance":
+        numeric_counts = pd.to_numeric(df['Count'], errors='coerce')
+        top_birds = (
+            df.assign(numeric_count=numeric_counts)
+            .groupby('Common Name')['numeric_count']
+            .sum(min_count=1)
+            .dropna()
+            .sort_values(ascending=False)
+            .head(5)
+        )
+    else:
+        top_birds = df['Common Name'].value_counts().head(5)
 
     github_repo = os.environ.get("GITHUB_REPOSITORY", "your-username/eBird-card")
     today_date = datetime.now().strftime("%Y-%m-%d")
@@ -54,15 +66,16 @@ def main():
     for i, (bird, count) in enumerate(top_birds.items()):
         rank = i + 1
         color = rank_colors[i]
+        count_label = f"{int(count):,} individuals" if args.mode == "abundance" else f"{count} times"
         
         ranking_svg_elements += f"""
         <text x="35" y="{y_offset}" style="font: 700 15px 'Segoe UI', Ubuntu, Sans-Serif; fill: {color};">{rank}.</text>
         <text x="65" y="{y_offset}" style="font: 500 15px 'Noto Sans CJK KR', 'Noto Sans CJK JP', 'Segoe UI', Ubuntu, Sans-Serif; fill: #c9d1d9;" title="{bird}">{bird}</text>
-        <text x="410" y="{y_offset}" style="font: 600 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; text-anchor: end;">{count} times</text>
+        <text x="410" y="{y_offset}" style="font: 600 14px 'Segoe UI', Ubuntu, Sans-Serif; fill: #58a6ff; text-anchor: end;">{count_label}</text>
         """
         y_offset += 32
 
-    card_title = "🐦 Frequently Seen Birds"
+    card_title = "🐦 Most Abundant Birds" if args.mode == "abundance" else "🐦 Frequently Seen Birds"
     emoji_pattern = re.compile(r'[\U0001F000-\U0001FAFF\U00002600-\U000027BF]+')
     emoji_match = emoji_pattern.search(card_title)
     
