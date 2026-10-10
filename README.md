@@ -20,8 +20,9 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 <details>
 <summary>View Abundance Ranking (total individuals)</summary>
 
-<p align="right">
-  <img src="./assets/abundance-ranking.svg" width="300" alt="Most Abundant Birds Ranking Card">
+<p align="center">
+  <img align="top" src="./assets/transparent-spacer.svg" width="300" height="1" alt="">
+  <img align="top" src="./assets/abundance-ranking.svg" width="300" alt="Most Abundant Birds Ranking Card">
 </p>
 
 </details>
