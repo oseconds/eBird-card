@@ -6,60 +6,143 @@ import zipfile
 import argparse
 import requests
 import pandas as pd
+import pycountry
 from datetime import datetime
+from xml.sax.saxutils import escape as xml_escape
 
-def get_inaturalist_data(scientific_name):
-    """
-    iNaturalist API로 사진 URL과 IUCN 보전 상태를 가져온 뒤, Base64로 변환합니다.
-    """
-    if not scientific_name or pd.isna(scientific_name):
-        return None, "unknown"
-        
-    url = "https://api.inaturalist.org/v1/taxa"
-    params = {
-        "q": scientific_name,
-        "is_active": "true",
-        "rank": "species",
-        "per_page": 1
+STATUS_COLORS = {
+    "LC": "#3fb950",  # Least Concern
+    "NT": "#a3be4a",  # Near Threatened
+    "VU": "#e3b341",  # Vulnerable
+    "EN": "#db6d28",  # Endangered
+    "CR": "#f85149",  # Critically Endangered
+    "RE": "#b32846",  # Regionally Extinct
+    "EW": "#bd7b80",  # Extinct in the Wild
+    "EX": "#b69295",  # Extinct
+    "DD": "#8b949e",  # Data Deficient
+    "NE": "#8b949e",  # Not Evaluated
+}
+
+
+def get_observation_country_code(row):
+    """eBird exports typically encode the country in State/Province (e.g. KR-11)."""
+    for column in ("Country Code", "State/Province"):
+        value = row.get(column, "")
+        if pd.isna(value):
+            continue
+        match = re.match(r"^([A-Za-z]{2})(?:[-_]|$)", str(value).strip())
+        if match:
+            return match.group(1).upper()
+    return None
+
+
+def country_name_aliases(country_code):
+    """Use ISO 3166 names, not a Korea-only mapping, for regional evaluations."""
+    if not country_code:
+        return set()
+    country = pycountry.countries.get(alpha_2=country_code.upper())
+    if country is None:
+        return set()
+    names = {
+        getattr(country, field).casefold()
+        for field in ("name", "common_name", "official_name")
+        if getattr(country, field, None)
     }
-    
+    names.update({
+        "RU": {"russia"},
+        "US": {"united states", "usa"},
+        "GB": {"uk", "great britain"},
+        "TR": {"turkey"},
+        "CZ": {"czech republic"},
+    }.get(country_code.upper(), set()))
+    return names
+
+
+def select_conservation_statuses(statuses, country_code):
+    """Return verified global IUCN and observation-country regional categories."""
+    global_status = None
+    regional_status = None
+    country_names = country_name_aliases(country_code)
+    for entry in statuses:
+        status = str(entry.get("status") or "").upper().strip()
+        if status not in STATUS_COLORS:
+            continue
+        place = entry.get("place")
+        authority = str(entry.get("authority") or "").strip().casefold()
+        if place is None:
+            if authority == "iucn red list" and global_status is None:
+                global_status = status
+        elif isinstance(place, dict) and regional_status is None and country_names:
+            place_name = str(place.get("name") or "").casefold()
+            if place_name in country_names:
+                regional_status = status
+    return global_status, regional_status
+
+
+def get_inaturalist_data(scientific_name, country_code=None):
+    """Get an exact-match taxon's image and optional global/regional Red List data."""
+    if not isinstance(scientific_name, str) or not scientific_name.strip():
+        return None, None, None
+
     try:
-        response = requests.get(url, params=params, timeout=5).json()
-        results = response.get("results", [])
-        
-        if not results:
-            return None, "unknown"
-            
-        data = results[0]
-        photo_url = data.get("default_photo", {}).get("medium_url")
-        
-        status = "unknown"
-        if data.get("conservation_status"):
-            status = data["conservation_status"].get("status", "").lower()
-            
-        base64_image = None
-        if photo_url:
-            img_res = requests.get(photo_url, timeout=5)
-            if img_res.status_code == 200:
-                encoded = base64.b64encode(img_res.content).decode('utf-8')
-                base64_image = f"data:image/jpeg;base64,{encoded}"
-                
-        return base64_image, status
-        
-    except Exception as e:
-        print(f"⚠️ iNaturalist 데이터 처리 오류 ({scientific_name}): {e}")
-        return None, "unknown"
+        response = requests.get(
+            "https://api.inaturalist.org/v1/taxa",
+            params={
+                "q": scientific_name,
+                "is_active": "true",
+                "rank": "species",
+                "per_page": 10,
+            },
+            timeout=10,
+        )
+        response.raise_for_status()
+        results = response.json().get("results", [])
+        taxon = next(
+            (item for item in results if item.get("name", "").casefold() == scientific_name.strip().casefold()),
+            None,
+        )
+        if not taxon:
+            print(f"⚠️ No exact iNaturalist species match for {scientific_name}")
+            return None, None, None
+    except (requests.RequestException, ValueError) as e:
+        print(f"⚠️ iNaturalist taxon lookup failed ({scientific_name}): {e}")
+        return None, None, None
+
+    image_data = None
+    photo_url = (taxon.get("default_photo") or {}).get("medium_url")
+    if photo_url:
+        try:
+            photo_response = requests.get(photo_url, timeout=10)
+            photo_response.raise_for_status()
+            encoded = base64.b64encode(photo_response.content).decode("ascii")
+            image_data = f"data:image/jpeg;base64,{encoded}"
+        except requests.RequestException as e:
+            print(f"⚠️ iNaturalist photo unavailable: {e}")
+
+    global_status = None
+    regional_status = None
+    try:
+        status_response = requests.get(
+            f"https://api.inaturalist.org/v2/taxa/{taxon['id']}",
+            params={"fields": "(name:!t,conservation_statuses:all)"},
+            timeout=10,
+        )
+        status_response.raise_for_status()
+        details = status_response.json().get("results", [])
+        if details and details[0].get("name", "").casefold() == taxon["name"].casefold():
+            global_status, regional_status = select_conservation_statuses(
+                details[0].get("conservation_statuses") or [],
+                country_code,
+            )
+    except (requests.RequestException, ValueError) as e:
+        print(f"⚠️ iNaturalist conservation status unavailable: {e}")
+
+    return image_data, global_status, regional_status
+
 
 def get_status_color(status):
-    """보전 상태에 따른 동그라미 색상 반환"""
-    if status in ['cr', 'en']:
-        return "#f85149" # Red (위기/멸종위기)
-    elif status in ['vu', 'nt']:
-        return "#d29922" # Orange (취약/준위협)
-    elif status in ['lc']:
-        return "#3fb950" # Green (관심대상)
-    else:
-        return "#8b949e" # Gray (기타/정보없음)
+    return STATUS_COLORS.get(status, "#8b949e")
+
 
 def get_twemoji_inline_svg(emoji_str):
     try:
@@ -108,8 +191,9 @@ def main():
             seen.add(species)
             lifers.append({
                 'Common Name': species, 
-                'Scientific Name': sci_name, 
-                'Date': row['Date']
+                'Scientific Name': sci_name,
+                'Date': row['Date'],
+                'Country Code': get_observation_country_code(row)
             })
     
     if not lifers:
@@ -123,9 +207,24 @@ def main():
 
     print(f"🐣 Latest Lifer: {bird_name} ({sci_name})")
     
-    print(f"🌿 Fetching iNaturalist data & embedding image for {sci_name}...")
-    bird_image_data, conservation_status = get_inaturalist_data(sci_name)
-    dot_color = get_status_color(conservation_status)
+    country_code = latest_lifer['Country Code']
+    print(f"🌿 Fetching iNaturalist photo and conservation statuses for {sci_name} ({country_code or 'unknown region'})...")
+    bird_image_data, global_status, regional_status = get_inaturalist_data(sci_name, country_code)
+
+    status_rows = []
+    if global_status:
+        status_rows.append(("Global IUCN", global_status))
+    if regional_status:
+        status_rows.append((f"Regional ({country_code})", regional_status))
+    status_y_positions = [168] if len(status_rows) == 1 else [155, 175]
+    status_svg = "\\n".join(
+        f'<circle cx="38" cy="{y}" r="4.5" fill="{get_status_color(status)}" />'
+        f'<text x="50" y="{y}" class="status-label" dominant-baseline="central">'
+        f'{xml_escape(label)}: {status}</text>'
+        for (label, status), y in zip(status_rows, status_y_positions)
+    )
+    print(f"🌿 Global IUCN: {global_status or 'unavailable'} | "
+          f"Regional ({country_code or 'n/a'}): {regional_status or 'unavailable'}")
 
     github_repo = os.environ.get("GITHUB_REPOSITORY", "your-username/eBird-card")
     today_date = datetime.now().strftime("%Y-%m-%d")
@@ -176,13 +275,11 @@ def main():
             <rect width="100%" height="100%" class="bg"/>
             {title_svg}
             
-            <text x="30" y="85" class="bird-name">{bird_name}</text>
-            <text x="30" y="107" class="sci-name">{sci_name}</text>
+            <text x="30" y="85" class="bird-name">{xml_escape(str(bird_name))}</text>
+            <text x="30" y="107" class="sci-name">{xml_escape(str(sci_name))}</text>
             <text x="30" y="138" class="date-label">📅 Observed on: {bird_date}</text>
             
-            <!-- 세로 중앙 정렬된 동그라미 컬러 점과 텍스트 -->
-            <circle cx="38" cy="168" r="4.5" fill="{dot_color}" />
-            <text x="50" y="168" class="status-label" dominant-baseline="central">IUCN: {conservation_status.upper()}</text>
+            {status_svg}
             
             {image_element}
             
