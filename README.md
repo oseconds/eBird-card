@@ -56,6 +56,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 - **Latest Birding Session**: Automatically tracks your last birding date, location, and the last bird you sighted.
 - **Custom Location Formats**: Choose how your location is displayed (`location`, `state`, `country`, or hidden with `none`).
 - **Custom Card Titles**: Personalize your card title (defaults to `🪶 My Feathered Log`).
+- **Newest Lifer Conservation**: Fetch global IUCN status and, when available, the regional Red List category for the country of the first observation, using iNaturalist without API keys.
 - **Automated Workflow**: Powered by GitHub Actions for easy manual generation using your eBird export data.
 
 ---
@@ -118,7 +119,7 @@ The **Generate eBird Bird Ranking Cards** workflow only requires `zip_url` and g
 
 This project utilizes the following open-source assets and APIs:
 
-- **Bird Images**: [iNaturalist API](https://api.inaturalist.org/v1/taxa)
+- **Bird Images & Conservation Status**: [iNaturalist API](https://api.inaturalist.org/) (Global IUCN and available country-level regional Red List entries)
   - **License**: Creative Commons (default: [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)) / Copyrighted by individual [iNaturalist](https://www.inaturalist.org) contributors.
 - **Emojis**: [Twemoji](https://github.com/jdecked/twemoji) 
   - **License**: [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) (Copyright Twitter, Inc. and other contributors)
