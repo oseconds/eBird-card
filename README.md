@@ -10,28 +10,35 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 <div align="center">
 
-<p>
-  <img align="top" src="./assets/ebird-card.svg" width="300" alt="Main Stats Card">
-  <img align="top" src="./assets/freq-ranking.svg" width="300" alt="Frequency Ranking Card">
-</p>
+<table width="100%" align="center">
+  <tr>
+    <td width="50%" align="center" valign="top">
+      <img src="./assets/ebird-card.svg" width="100%" alt="Main Stats Card">
+    </td>
+    <td width="50%" align="center" valign="top">
+      <img src="./assets/freq-ranking.svg" width="100%" alt="Frequency Ranking Card">
+      <br><br>
+      <img src="./assets/abundance-ranking.svg" width="100%" alt="Abundance Ranking Card">
+    </td>
+  </tr>
+</table>
+
+*A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.*
+
+</div>
+
+---
+
+### 🐣 Newest Lifer
+
+<div align="center">
 
 <p>
   <img align="top" src="./assets/new-lifer.svg" width="300" alt="Newest Lifer Card">
   <img align="top" src="./examples/new-lifer-compact-preview.svg" width="300" alt="Newest Lifer Compact Card">
 </p>
 
-*A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.*
-
 </div>
-
-<details>
-<summary>View Abundance Ranking (total individuals)</summary>
-
-<p align="center">
-  <img src="./assets/abundance-ranking.svg" width="300" alt="Most Abundant Birds Ranking Card">
-</p>
-
-</details>
 
 ---
 
