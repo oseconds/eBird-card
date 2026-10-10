@@ -7,14 +7,6 @@ on:
         description: 'eBird Data Download URL'
         required: true
         type: string
-      ranking_mode:
-        description: 'Ranking metric (observations or individuals)'
-        required: true
-        type: choice
-        default: 'frequency'
-        options:
-          - frequency
-          - abundance
 
 jobs:
   generate-ranking:
@@ -39,13 +31,13 @@ jobs:
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           EBIRD_ZIP_URL: ${{ github.event.inputs.zip_url }}
-          RANKING_MODE: ${{ github.event.inputs.ranking_mode }}
         run: |
-          python src/ebird_readme_card/freq-bird-ranking.py --zip-url "$EBIRD_ZIP_URL" --mode "$RANKING_MODE" --output "assets/freq-ranking.svg"
+          python src/ebird_readme_card/freq-bird-ranking.py --zip-url "$EBIRD_ZIP_URL" --mode frequency --output "assets/freq-ranking.svg"
+          python src/ebird_readme_card/freq-bird-ranking.py --zip-url "$EBIRD_ZIP_URL" --mode abundance --output "assets/abundance-ranking.svg"
 
       - name: Commit and push changes
         if: ${{ env.LOCAL_ACT != 'true' }}
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "update freq-ranking card"
-          file_pattern: "assets/freq-ranking.svg"
+          commit_message: "update frequency and abundance ranking cards"
+          file_pattern: "assets/freq-ranking.svg assets/abundance-ranking.svg"
