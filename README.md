@@ -11,13 +11,13 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 <div align="center">
 
 <p>
-  <img src="./assets/ebird-card.svg" width="390" alt="Main Stats Card">
-  <img src="./assets/freq-ranking.svg" width="390" alt="Frequency Ranking Card">
+  <img src="./assets/ebird-card.svg" width="300" alt="Main Stats Card">
+  <img src="./assets/freq-ranking.svg" width="300" alt="Frequency Ranking Card">
 </p>
 
 <p>
-  <img src="./assets/new-lifer.svg" width="390" alt="Newest Lifer Card">
-  <img src="./examples/new-lifer-compact.svg" width="270" alt="Newest Lifer Compact Card">
+  <img src="./assets/new-lifer.svg" width="300" alt="Newest Lifer Card">
+  <img src="./examples/new-lifer-compact.svg" width="220" alt="Newest Lifer Compact Card">
 </p>
 
 *A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.*
