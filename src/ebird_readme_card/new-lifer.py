@@ -217,7 +217,7 @@ def main():
     if regional_status:
         status_rows.append((f"Regional ({country_code})", regional_status))
     status_y_positions = [168] if len(status_rows) == 1 else [155, 175]
-    status_svg = "\\n".join(
+    status_svg = "\n".join(
         f'<circle cx="38" cy="{y}" r="4.5" fill="{get_status_color(status)}" />'
         f'<text x="50" y="{y}" class="status-label" dominant-baseline="central">'
         f'{xml_escape(label)}: {status}</text>'
