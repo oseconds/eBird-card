@@ -24,12 +24,21 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 </div>
 
+<details>
+<summary>View Abundance Ranking (total individuals)</summary>
+
+<p align="center">
+  <img src="./assets/abundance-ranking.svg" width="300" alt="Most Abundant Birds Ranking Card">
+</p>
+
+</details>
+
 ---
 
 ## ✨ Features
 
 - **Key Statistics**: Display your total species, checklists, and observations at a glance.
-- **Bird Ranking Modes**: Rank your top five species by observation frequency (`frequency`) or cumulative counted individuals (`abundance`).
+- **Bird Ranking Modes**: Generate both frequency (observation records) and abundance (cumulative counted individuals) rankings in one workflow run.
 - **Latest Birding Session**: Automatically tracks your last birding date, location, and the last bird you sighted.
 - **Custom Location Formats**: Choose how your location is displayed (`location`, `state`, `country`, or hidden with `none`).
 - **Custom Card Titles**: Personalize your card title (defaults to `🪶 My Feathered Log`).
@@ -87,7 +96,7 @@ When running the workflow manually, you can configure:
 * **`location_mode`**: Choose how location is displayed (`location`, `state`, `country`, or `none`).
 * **`card_title`**: Custom title for your card (Leave blank for the default `🪶 My Feathered Log`).
 
-For the **Generate eBird Freq Bird Ranking Card** workflow, choose **`ranking_mode`**: `frequency` (number of observation records, default) or `abundance` (sum of numeric `Count` values for each species; `X` is excluded). Both modes update `assets/freq-ranking.svg`.
+The **Generate eBird Freq Bird Ranking Card** workflow only requires `zip_url` and generates both `assets/freq-ranking.svg` (observation frequency) and `assets/abundance-ranking.svg` (sum of numeric `Count` values; uncounted `X` entries are excluded) in one run.
 
 ---
 
