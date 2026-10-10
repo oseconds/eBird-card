@@ -1,4 +1,4 @@
-name: Generate eBird Freq Bird Ranking Card
+name: Generate eBird Bird Ranking Cards
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
 
 jobs:
   generate-ranking:
-    name: Generate Freq Bird Ranking
+    name: Generate Frequency and Abundance Rankings
     runs-on: ubuntu-latest
 
     steps:
