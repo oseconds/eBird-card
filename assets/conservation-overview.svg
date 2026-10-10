@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="450" height="370" viewBox="0 0 450 370" role="img" aria-label="Global IUCN conservation distribution">
+  <title>Bird Conservation Overview</title>
+  <desc>Global IUCN categories across 54 distinct scientific-name labels observed in eBird. N/A means no verified global assessment or an unresolved taxon; DD means the official Data Deficient category.</desc>
+  <style>
+    .heading { font: 600 19px 'Segoe UI', Ubuntu, sans-serif; fill: #e6edf3; }
+    .sub { font: 400 12px 'Segoe UI', Ubuntu, sans-serif; fill: #8b949e; }
+    .figure { font: 700 17px 'Segoe UI', Ubuntu, sans-serif; fill: #e6edf3; }
+    .label { font: 700 12px 'Segoe UI', Ubuntu, sans-serif; }
+    .count { font: 600 12px 'Segoe UI', Ubuntu, sans-serif; fill: #c9d1d9; text-anchor: end; }
+    .percent { font: 400 11px 'Segoe UI', Ubuntu, sans-serif; fill: #8b949e; text-anchor: end; }
+    .foot { font: 400 10px 'Segoe UI', Ubuntu, sans-serif; fill: #6e7681; }
+  </style>
+  <rect x=".5" y=".5" width="449" height="369" rx="10" fill="#0d1117" stroke="#30363d"/>
+  <text x="30" y="38" class="heading">🌿 Conservation Overview</text>
+  <text x="30" y="60" class="sub">Global IUCN · Unique eBird taxa</text>
+  <text x="30" y="91" class="figure">54 <tspan class="sub">taxa</tspan></text>
+  <text x="166" y="91" class="figure">44 <tspan class="sub">verified</tspan></text>
+  <text x="318" y="91" class="figure" fill="#e3b341">1 <tspan class="sub">threatened</tspan></text>
+  <text x="30" y="126" class="label" fill="#f85149">CR</text><rect x="103" y="116" width="222" height="13" rx="5" fill="#21262d"/><rect x="103" y="116" width="0.00" height="13" rx="5" fill="#f85149"><title>CR: 0 taxa (0.0%)</title></rect><text x="340" y="126" class="count">0</text><text x="414" y="126" class="percent">0%</text>
+  <text x="30" y="156" class="label" fill="#db6d28">EN</text><rect x="103" y="146" width="222" height="13" rx="5" fill="#21262d"/><rect x="103" y="146" width="0.00" height="13" rx="5" fill="#db6d28"><title>EN: 0 taxa (0.0%)</title></rect><text x="340" y="156" class="count">0</text><text x="414" y="156" class="percent">0%</text>
+  <text x="30" y="186" class="label" fill="#e3b341">VU</text><rect x="103" y="176" width="222" height="13" rx="5" fill="#21262d"/><rect x="103" y="176" width="4.11" height="13" rx="5" fill="#e3b341"><title>VU: 1 taxa (1.9%)</title></rect><text x="340" y="186" class="count">1</text><text x="414" y="186" class="percent">2%</text>
+  <text x="30" y="216" class="label" fill="#a3be4a">NT</text><rect x="103" y="206" width="222" height="13" rx="5" fill="#21262d"/><rect x="103" y="206" width="0.00" height="13" rx="5" fill="#a3be4a"><title>NT: 0 taxa (0.0%)</title></rect><text x="340" y="216" class="count">0</text><text x="414" y="216" class="percent">0%</text>
+  <text x="30" y="246" class="label" fill="#3fb950">LC</text><rect x="103" y="236" width="222" height="13" rx="5" fill="#21262d"/><rect x="103" y="236" width="176.78" height="13" rx="5" fill="#3fb950"><title>LC: 43 taxa (79.6%)</title></rect><text x="340" y="246" class="count">43</text><text x="414" y="246" class="percent">80%</text>
+  <text x="30" y="276" class="label" fill="#8b949e">DD</text><rect x="103" y="266" width="222" height="13" rx="5" fill="#21262d"/><rect x="103" y="266" width="0.00" height="13" rx="5" fill="#8b949e"><title>DD: 0 taxa (0.0%)</title></rect><text x="340" y="276" class="count">0</text><text x="414" y="276" class="percent">0%</text>
+  <text x="30" y="306" class="label" fill="#586069">N/A</text><rect x="103" y="296" width="222" height="13" rx="5" fill="#21262d"/><rect x="103" y="296" width="41.11" height="13" rx="5" fill="#586069"><title>N/A: 10 taxa (18.5%)</title></rect><text x="340" y="306" class="count">10</text><text x="414" y="306" class="percent">19%</text>
+  <line x1="30" x2="420" y1="333" y2="333" stroke="#21262d"/>
+  <text x="30" y="348" class="foot">DD = Data Deficient · N/A = not verified / unmatched</text>
+  <text x="30" y="361" class="foot">Source: iNaturalist / IUCN Red List · Updated 2026-10-10</text>
+</svg>
