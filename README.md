@@ -48,11 +48,23 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 ---
 
+### 🌿 Conservation Overview
+
+<div align="center">
+
+<img src="./assets/conservation-overview.svg" width="420" alt="Global IUCN conservation status distribution of observed bird taxa">
+
+*Global IUCN categories by unique scientific-name label. DD is the official Data Deficient category; N/A means unverified or unmatched.*
+
+</div>
+
+---
 
 ## ✨ Features
 
 - **Key Statistics**: Display your total species, checklists, and observations at a glance.
 - **Bird Ranking Modes**: Generate both frequency (observation records) and abundance (cumulative counted individuals) rankings in one workflow run.
+- **Conservation Overview**: Count distinct observed taxa by global IUCN Red List category; unmatched or unavailable assessments are shown as N/A, not LC.
 - **Latest Birding Session**: Automatically tracks your last birding date, location, and the last bird you sighted.
 - **Custom Location Formats**: Choose how your location is displayed (`location`, `state`, `country`, or hidden with `none`).
 - **Custom Card Titles**: Personalize your card title (defaults to `🪶 My Feathered Log`).
@@ -112,6 +124,8 @@ When running the workflow manually, you can configure:
 * **`card_title`**: Custom title for your card (Leave blank for the default `🪶 My Feathered Log`).
 
 The **Generate eBird Bird Ranking Cards** workflow only requires `zip_url` and generates both `assets/freq-ranking.svg` (observation frequency) and `assets/abundance-ranking.svg` (sum of numeric `Count` values; uncounted `X` entries are excluded) in one run.
+
+The **Generate eBird Conservation Overview** workflow also requires only `zip_url`. It generates `assets/conservation-overview.svg` using public iNaturalist taxon lookups and global IUCN Red List entries. No eBird API key is required. The first run may take about a minute because requests are rate-limited; only exact species-name matches count as verified.
 
 ---
 
