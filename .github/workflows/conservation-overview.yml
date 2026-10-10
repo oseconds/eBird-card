@@ -1,0 +1,38 @@
+name: Generate eBird Conservation Overview
+
+on:
+  workflow_dispatch:
+    inputs:
+      zip_url:
+        description: "eBird data download ZIP URL"
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: pip install pandas requests
+
+      - name: Generate conservation overview
+        run: |
+          python src/ebird_readme_card/conservation-overview.py \
+            --zip-url "${{ github.event.inputs.zip_url }}" \
+            --output assets/conservation-overview.svg
+
+      - name: Commit SVG
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "update conservation overview card"
+          file_pattern: assets/conservation-overview.svg
