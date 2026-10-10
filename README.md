@@ -17,7 +17,7 @@ Generate a clean and stylish SVG stats card from your eBird data, built specific
 
 <p>
   <img align="top" src="./assets/new-lifer.svg" width="300" alt="Newest Lifer Card">
-  <img align="top" src="./examples/new-lifer-compact.svg" width="220" alt="Newest Lifer Compact Card">
+  <img align="top" src="./examples/new-lifer-compact-preview.svg" width="300" alt="Newest Lifer Compact Card">
 </p>
 
 *A simple way to showcase your recent eBird activity, total species, and latest sighting directly on your GitHub profile.*
