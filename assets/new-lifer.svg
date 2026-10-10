@@ -17,9 +17,8 @@
             <text x="30" y="107" class="sci-name">Turdus mandarinus</text>
             <text x="30" y="138" class="date-label">📅 Observed on: 2026-08-05</text>
             
-            <!-- 세로 중앙 정렬된 동그라미 컬러 점과 텍스트 -->
-            <circle cx="38" cy="168" r="4.5" fill="#8b949e" />
-            <text x="50" y="168" class="status-label" dominant-baseline="central">IUCN: UNKNOWN</text>
+            <circle cx="38" cy="168" r="4.5" fill="#3fb950" />
+            <text x="50" y="168" class="status-label" dominant-baseline="central">Global IUCN: LC</text>
             
             
         <clipPath id="circle-clip">
